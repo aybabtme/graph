@@ -1,4 +1,4 @@
-package girafe
+package graph
 
 type AdjList struct {
 	v   int

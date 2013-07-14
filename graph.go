@@ -1,4 +1,4 @@
-package girafe
+package graph
 
 import (
 	"bytes"
