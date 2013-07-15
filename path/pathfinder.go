@@ -1,7 +1,6 @@
 package path
 
 import (
-	"fmt"
 	"github.com/aybabtme/graph"
 )
 
@@ -18,6 +17,14 @@ type TremauxDFS struct {
 }
 
 func BuildTremauxDFS(g graph.Graph, from int) PathFinder {
+
+	if from < 0 {
+		panic("Can't start DFS from vertex v < 0")
+	}
+
+	if from >= g.V() {
+		panic("Can't start DFS from vertex v >= total vertex count")
+	}
 
 	t := TremauxDFS{
 		g:      g,
