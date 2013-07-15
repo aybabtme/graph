@@ -24,6 +24,7 @@ func (a AdjList) Adj(v int) []int {
 func (a AdjList) V() int {
 	return a.v
 }
+
 func (a AdjList) E() int {
 	e := 0
 	for _, v := range a.adj {
@@ -59,13 +60,13 @@ func (a AdjMatrix) AddEdge(v, w int) {
 }
 
 func (a AdjMatrix) Adj(v int) []int {
-	var edges []int
+	var vertices []int
 	for i, ok := range a.matrix[v] {
 		if ok {
-			edges = append(edges, i)
+			vertices = append(vertices, i)
 		}
 	}
-	return edges
+	return vertices
 }
 
 func (a AdjMatrix) V() int {
