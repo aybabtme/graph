@@ -1,6 +1,7 @@
 package path
 
 import (
+	"errors"
 	"github.com/aybabtme/graph"
 )
 
@@ -16,17 +17,19 @@ type tremauxDFS struct {
 	edgeTo []int
 }
 
-func BuildDFS(g graph.Graph, from int) PathFinder {
+func BuildDFS(g graph.Graph, from int) (PathFinder, error) {
+
+	var t tremauxDFS
 
 	if from < 0 {
-		panic("Can't start DFS from vertex v < 0")
+		return t, errors.New("Can't start DFS from negative source")
 	}
 
 	if from >= g.V() {
-		panic("Can't start DFS from vertex v >= total vertex count")
+		return t, errors.New("Can't start DFS from vertex v >= total vertex count")
 	}
 
-	t := tremauxDFS{
+	t = tremauxDFS{
 		g:      g,
 		from:   from,
 		marked: make([]bool, g.V()),
@@ -47,7 +50,7 @@ func BuildDFS(g graph.Graph, from int) PathFinder {
 
 	visit(from)
 
-	return t
+	return t, nil
 }
 
 func (t tremauxDFS) HasPathTo(to int) bool {

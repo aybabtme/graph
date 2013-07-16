@@ -5,7 +5,19 @@ import (
 	"testing"
 )
 
+type pfFact func(graph.Graph, int) (PathFinder, error)
+
+var pathFinders = []pfFact{
+	BuildDFS,
+}
+
 func TestDFSWithSimpleDisconnectedGraph(t *testing.T) {
+	for _, pf := range pathFinders {
+		simpleGraphHarness(t, pf)
+	}
+}
+
+func simpleGraphHarness(t *testing.T, pfFactory pfFact) {
 	g := graph.NewAdjList(13)
 
 	expectPathTo := []int{0, 1, 2, 3, 4, 5, 6}
@@ -28,7 +40,10 @@ func TestDFSWithSimpleDisconnectedGraph(t *testing.T) {
 	g.AddEdge(11, 12)
 
 	for _, v := range expectPathTo {
-		pf := BuildDFS(g, v)
+		pf, err := pfFactory(g, v)
+		if err != nil {
+			t.Fatalf("Couldn't build PathFinder, %v", err)
+		}
 
 		for _, conn := range expectPathTo {
 			if !pf.HasPathTo(conn) {
@@ -72,12 +87,10 @@ func TestDFSWithSimpleDisconnectedGraph(t *testing.T) {
 					v, disconn, g)
 			}
 		}
-
 	}
-
 }
 
-var shouldPanic = []struct {
+var shouldHaveErr = []struct {
 	size   int
 	source int
 	msg    string
@@ -102,19 +115,21 @@ var shouldPanic = []struct {
 }
 
 func TestDFSPanicBadArgsForSource(t *testing.T) {
-	for _, tt := range shouldPanic {
-		badArgsHarness(t, tt.size, tt.source, tt.msg)
+	for _, pf := range pathFinders {
+		for _, tt := range shouldHaveErr {
+			badArgsHarness(t, pf, tt.size, tt.source, tt.msg)
+		}
 	}
 }
 
-func badArgsHarness(t *testing.T, size, source int, msg string) {
+func badArgsHarness(t *testing.T, pf pfFact, size, source int, msg string) {
 	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("Should have panicked! %s", msg)
-		} else {
-			t.Logf("Recovered panic on %v\n", r)
+		if r := recover(); r != nil {
+			t.Errorf("Test \"%s\" panicked with message, %v", msg, r)
 		}
 	}()
 
-	_ = BuildDFS(graph.NewAdjList(size), source)
+	if _, err := pf(graph.NewAdjList(size), source); err == nil {
+		t.Errorf("%s, should have error", msg)
+	}
 }
