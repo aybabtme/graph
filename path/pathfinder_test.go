@@ -43,7 +43,8 @@ func TestDFSWithSimpleDisconnectedGraph(t *testing.T) {
 				t.Errorf("Path to itself should be [%d], path was %v", v, path)
 			}
 			if v != conn && l == 1 {
-				t.Errorf("Path should be longer than 1 from %d to %d in graph %v")
+				t.Errorf("Path should be longer than 1 from %d to %d in graph %v",
+					v, conn, g)
 			}
 
 			if l <= 0 {
