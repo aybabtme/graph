@@ -2,12 +2,14 @@ package graph
 
 type adjList struct {
 	v   int
+	e   int
 	adj [][]int
 }
 
 func NewAdjListGraph(v int) Graph {
 	return adjList{
 		v:   v,
+		e:   0,
 		adj: make([][]int, v),
 	}
 }
@@ -15,6 +17,7 @@ func NewAdjListGraph(v int) Graph {
 func (a adjList) AddEdge(v, w int) {
 	a.adj[v] = append(a.adj[v], w)
 	a.adj[w] = append(a.adj[w], v)
+	a.e++
 }
 
 func (a adjList) Adj(v int) []int {
@@ -26,11 +29,7 @@ func (a adjList) V() int {
 }
 
 func (a adjList) E() int {
-	e := 0
-	for _, v := range a.adj {
-		e += len(v)
-	}
-	return e / 2
+	return a.e
 }
 
 func (a adjList) GoString() string {
