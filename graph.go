@@ -6,8 +6,8 @@ import (
 	"strconv"
 )
 
-// Ungraph is a undirected graph with V vertices
-type Ungraph interface {
+// Graph is a undirected graph with V vertices
+type Graph interface {
 	fmt.GoStringer
 	// AddEdge adds an edge v-w
 	AddEdge(v, w int)
@@ -19,7 +19,7 @@ type Ungraph interface {
 	E() int
 }
 
-func stringify(g Ungraph) string {
+func stringify(g Graph) string {
 	var output bytes.Buffer
 
 	do := func(n int, err error) {
@@ -39,11 +39,11 @@ func stringify(g Ungraph) string {
 	return output.String()
 }
 
-func Degree(g Ungraph, v int) int {
+func Degree(g Graph, v int) int {
 	return len(g.Adj(v))
 }
 
-func MaxDegree(g Ungraph) int {
+func MaxDegree(g Graph) int {
 	max := 0
 	deg := 0
 	for v := 0; v < g.V(); v++ {
@@ -55,7 +55,7 @@ func MaxDegree(g Ungraph) int {
 	return max
 }
 
-func MinDegree(g Ungraph) int {
+func MinDegree(g Graph) int {
 	min := Degree(g, g.V())
 	deg := 0
 	for v := 0; v < g.V()-1; v++ {
@@ -67,13 +67,13 @@ func MinDegree(g Ungraph) int {
 	return min
 }
 
-func AvgDegree(g Ungraph) float64 {
+func AvgDegree(g Graph) float64 {
 	e := float64(g.E())
 	v := float64(g.V())
 	return 2.0 * e / v
 }
 
-func NumSelfLoop(g Ungraph) int {
+func NumSelfLoop(g Graph) int {
 	c := 0
 	for v := 0; v < g.V(); v++ {
 		for _, w := range g.Adj(v) {
@@ -86,7 +86,63 @@ func NumSelfLoop(g Ungraph) int {
 	return c / 2
 }
 
-func IsBipartite(g Ungraph) bool {
-	panic("not implemented")
+func HasCycle(g Graph) bool {
+
+	if NumSelfLoop(g) != 0 {
+		return true
+	}
+
+	marked := make([]bool, g.V())
+	var visit func(v, u int) bool
+
+	visit = func(v, u int) bool {
+		marked[v] = true
+		for _, adj := range g.Adj(v) {
+			if marked[adj] {
+				visit(adj, v)
+			} else if u != adj {
+				return true
+			}
+		}
+		return false
+	}
+
+	for v := 0; v < g.V(); v++ {
+		if !marked[v] {
+			if visit(v, v) {
+				return true
+			}
+		}
+	}
 	return false
+}
+
+func IsBipartite(g Graph) bool {
+	marked := make([]bool, g.V())
+	color := make([]bool, g.V())
+
+	var visit func(v int) bool
+
+	visit = func(v int) bool {
+		marked[v] = true
+		for _, adj := range g.Adj(v) {
+			if marked[adj] {
+				color[v] = !color[adj]
+				visit(adj)
+			} else if color[v] == color[adj] {
+				return false
+			}
+		}
+		return true
+	}
+
+	for v := 0; v < g.V(); v++ {
+		if !marked[v] {
+			if !visit(v) {
+				return false
+			}
+		}
+	}
+
+	return true
 }

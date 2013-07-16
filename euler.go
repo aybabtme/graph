@@ -1,6 +1,6 @@
 package graph
 
-func HasEulerTour(g Ungraph) bool {
+func HasEulerTour(g Graph) bool {
 
 	isOdd := func(n int) bool { return n%2 != 0 }
 
@@ -12,17 +12,17 @@ func HasEulerTour(g Ungraph) bool {
 	return true
 }
 
-func EulerTour(g Ungraph) []int {
+func EulerTour(g Graph) []int {
 	panic("not implemented")
 	return []int{}
 }
 
-func HasEulerCircuit(g Ungraph) bool {
+func HasEulerCircuit(g Graph) bool {
 	panic("not implemented")
 	return false
 }
 
-func EulerCircuit(g Ungraph) []int {
+func EulerCircuit(g Graph) []int {
 	panic("not implemented")
 	return []int{}
 }

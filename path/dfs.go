@@ -6,7 +6,7 @@ import (
 )
 
 type tremauxDFS struct {
-	g      graph.Ungraph
+	g      graph.Graph
 	from   int
 	marked []bool
 	edgeTo []int
@@ -14,7 +14,7 @@ type tremauxDFS struct {
 
 // BuildDFS builds a Depth First Search PathFinder for graph g starting from
 // source s
-func BuildDFS(g graph.Ungraph, s int) (PathFinder, error) {
+func BuildDFS(g graph.Graph, s int) (PathFinder, error) {
 
 	var t tremauxDFS
 

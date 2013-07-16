@@ -7,7 +7,7 @@ import (
 )
 
 type bfs struct {
-	g      graph.Ungraph
+	g      graph.Graph
 	from   int
 	edgeTo []int
 	marked []bool
@@ -15,7 +15,7 @@ type bfs struct {
 
 // BuildBFS builds a Breath First Search PathFinder for graph g starting from
 // source s
-func BuildBFS(g graph.Ungraph, s int) (PathFinder, error) {
+func BuildBFS(g graph.Graph, s int) (PathFinder, error) {
 
 	var b bfs
 

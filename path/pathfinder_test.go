@@ -5,9 +5,9 @@ import (
 	"testing"
 )
 
-type pfFact func(graph.Ungraph, int) (PathFinder, error)
+type pfFact func(graph.Graph, int) (PathFinder, error)
 
-type graphFact func(int) graph.Ungraph
+type graphFact func(int) graph.Graph
 
 var (
 	pathFinders = []pfFact{
@@ -21,15 +21,15 @@ var (
 	}
 )
 
-func TestSearchWithSimpleDisconnectedUngraph(t *testing.T) {
+func TestSearchWithSimpleDisconnectedGraph(t *testing.T) {
 	for _, gf := range graphMakers {
 		for _, pf := range pathFinders {
-			simpleUngraphHarness(t, gf, pf)
+			simpleGraphHarness(t, gf, pf)
 		}
 	}
 }
 
-func simpleUngraphHarness(t *testing.T, gf graphFact, pfFactory pfFact) {
+func simpleGraphHarness(t *testing.T, gf graphFact, pfFactory pfFact) {
 	g := gf(13)
 
 	expectPathTo := []int{0, 1, 2, 3, 4, 5, 6}
@@ -112,18 +112,18 @@ var shouldHaveErr = []struct {
 	{0, 0, "Empty graph with index of 0"},
 	{0, 1, "Empty graph with index too big (1)"},
 	{0, 10, "Empty graph with index too big (10)"},
-	{1, 1, "Ungraph size 1 with index too big (1)"},
-	{1, 2, "Ungraph size 1 with index too big (2)"},
-	{1, 10, "Ungraph size 1 with index too big (10)"},
-	{1, -1, "Ungraph size 1 with negative index (-1)"},
-	{1, -2, "Ungraph size 1 with negative index (-2)"},
-	{1, -10, "Ungraph size 1 with negative index (-10)"},
-	{10, 10, "Ungraph size 10 with index too big (10)"},
-	{10, 11, "Ungraph size 10 with index too big (11)"},
-	{10, 100, "Ungraph size 10 with index too big (100)"},
-	{10, -1, "Ungraph size 10 with negative index (-1)"},
-	{10, -2, "Ungraph size 10 with negative index (-2)"},
-	{10, -10, "Ungraph size 10 with negative index (-10)"},
+	{1, 1, "Graph size 1 with index too big (1)"},
+	{1, 2, "Graph size 1 with index too big (2)"},
+	{1, 10, "Graph size 1 with index too big (10)"},
+	{1, -1, "Graph size 1 with negative index (-1)"},
+	{1, -2, "Graph size 1 with negative index (-2)"},
+	{1, -10, "Graph size 1 with negative index (-10)"},
+	{10, 10, "Graph size 10 with index too big (10)"},
+	{10, 11, "Graph size 10 with index too big (11)"},
+	{10, 100, "Graph size 10 with index too big (100)"},
+	{10, -1, "Graph size 10 with negative index (-1)"},
+	{10, -2, "Graph size 10 with negative index (-2)"},
+	{10, -10, "Graph size 10 with negative index (-10)"},
 }
 
 func TestSearchPanicBadArgsForSource(t *testing.T) {

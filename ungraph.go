@@ -5,7 +5,7 @@ type AdjList struct {
 	adj [][]int
 }
 
-func NewAdjList(v int) Ungraph {
+func NewAdjList(v int) Graph {
 	return AdjList{
 		v:   v,
 		adj: make([][]int, v),
@@ -43,7 +43,7 @@ type AdjMatrix struct {
 	matrix [][]bool
 }
 
-func NewAdjMatrix(v int) Ungraph {
+func NewAdjMatrix(v int) Graph {
 
 	matrix := make([][]bool, v)
 

@@ -20,7 +20,7 @@ type connectedComp struct {
 }
 
 // BuildCC builds a Connected Component representation of graph g
-func BuildCC(g graph.Ungraph) CC {
+func BuildCC(g graph.Graph) CC {
 
 	cc := connectedComp{
 		id:    make([]int, g.V()),

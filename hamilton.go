@@ -4,22 +4,22 @@ import (
 	"time"
 )
 
-func HasHamiltonTour(g Ungraph) bool {
+func HasHamiltonTour(g Graph) bool {
 	panic("not implemented")
 	return false
 }
 
-func HamiltonTour(g Ungraph, max time.Duration) []int {
+func HamiltonTour(g Graph, max time.Duration) []int {
 	panic("not implemented")
 	return []int{}
 }
 
-func HasHamiltonCircuit(g Ungraph) bool {
+func HasHamiltonCircuit(g Graph) bool {
 	panic("not implemented")
 	return false
 }
 
-func HamiltonCircuit(g Ungraph, max time.Duration) []int {
+func HamiltonCircuit(g Graph, max time.Duration) []int {
 	panic("not implemented")
 	return []int{}
 }
