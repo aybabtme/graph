@@ -39,6 +39,10 @@ func stringify(g Graph) string {
 	return output.String()
 }
 
+/*
+	General graph processing functions
+*/
+
 func Degree(g Graph, v int) int {
 	return len(g.Adj(v))
 }

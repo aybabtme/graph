@@ -1,31 +1,31 @@
 package graph
 
-type AdjList struct {
+type adjList struct {
 	v   int
 	adj [][]int
 }
 
-func NewAdjList(v int) Graph {
-	return AdjList{
+func NewAdjListGraph(v int) Graph {
+	return adjList{
 		v:   v,
 		adj: make([][]int, v),
 	}
 }
 
-func (a AdjList) AddEdge(v, w int) {
+func (a adjList) AddEdge(v, w int) {
 	a.adj[v] = append(a.adj[v], w)
 	a.adj[w] = append(a.adj[w], v)
 }
 
-func (a AdjList) Adj(v int) []int {
+func (a adjList) Adj(v int) []int {
 	return a.adj[v]
 }
 
-func (a AdjList) V() int {
+func (a adjList) V() int {
 	return a.v
 }
 
-func (a AdjList) E() int {
+func (a adjList) E() int {
 	e := 0
 	for _, v := range a.adj {
 		e += len(v)
@@ -33,17 +33,15 @@ func (a AdjList) E() int {
 	return e / 2
 }
 
-func (a AdjList) GoString() string {
+func (a adjList) GoString() string {
 	return stringify(a)
 }
 
-// AdjMatrix is a graph represented as a vertice-by-vertice matrix where the
-// entries represent the existence or absence of edges
-type AdjMatrix struct {
+type adjMatrix struct {
 	matrix [][]bool
 }
 
-func NewAdjMatrix(v int) Graph {
+func NewMatrixGraph(v int) Graph {
 
 	matrix := make([][]bool, v)
 
@@ -51,15 +49,15 @@ func NewAdjMatrix(v int) Graph {
 		matrix[i] = make([]bool, v)
 	}
 
-	return AdjMatrix{matrix: matrix}
+	return adjMatrix{matrix: matrix}
 }
 
-func (a AdjMatrix) AddEdge(v, w int) {
+func (a adjMatrix) AddEdge(v, w int) {
 	a.matrix[v][w] = true
 	a.matrix[w][v] = true
 }
 
-func (a AdjMatrix) Adj(v int) []int {
+func (a adjMatrix) Adj(v int) []int {
 	var vertices []int
 	for i, ok := range a.matrix[v] {
 		if ok {
@@ -69,11 +67,11 @@ func (a AdjMatrix) Adj(v int) []int {
 	return vertices
 }
 
-func (a AdjMatrix) V() int {
+func (a adjMatrix) V() int {
 	return len(a.matrix)
 }
 
-func (a AdjMatrix) E() int {
+func (a adjMatrix) E() int {
 	c := 0
 	for v := range a.matrix {
 		c += len(a.Adj(v))
@@ -81,6 +79,6 @@ func (a AdjMatrix) E() int {
 	return c
 }
 
-func (a AdjMatrix) GoString() string {
+func (a adjMatrix) GoString() string {
 	return stringify(a)
 }

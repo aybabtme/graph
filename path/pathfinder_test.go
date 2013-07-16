@@ -16,8 +16,8 @@ var (
 	}
 
 	graphMakers = []graphFact{
-		graph.NewAdjList,
-		graph.NewAdjMatrix,
+		graph.NewAdjListGraph,
+		graph.NewMatrixGraph,
 	}
 )
 
@@ -149,7 +149,7 @@ func badArgsHarness(
 		}
 	}()
 
-	if _, err := pf(graph.NewAdjList(size), source); err == nil {
+	if _, err := pf(graph.NewAdjListGraph(size), source); err == nil {
 		t.Errorf("%s, should have error", msg)
 	}
 }
