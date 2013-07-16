@@ -75,3 +75,45 @@ func TestDFSWithSimpleDisconnectedGraph(t *testing.T) {
 	}
 
 }
+
+var shouldPanic = []struct {
+	size   int
+	source int
+	msg    string
+}{
+	{0, -10, "Empty graph with negative index (-10)"},
+	{0, -1, "Empty graph with negative index (-1)"},
+	{0, 0, "Empty graph with index of 0"},
+	{0, 1, "Empty graph with index too big (1)"},
+	{0, 10, "Empty graph with index too big (10)"},
+	{1, 1, "Graph size 1 with index too big (1)"},
+	{1, 2, "Graph size 1 with index too big (2)"},
+	{1, 10, "Graph size 1 with index too big (10)"},
+	{1, -1, "Graph size 1 with negative index (-1)"},
+	{1, -2, "Graph size 1 with negative index (-2)"},
+	{1, -10, "Graph size 1 with negative index (-10)"},
+	{10, 10, "Graph size 10 with index too big (10)"},
+	{10, 11, "Graph size 10 with index too big (11)"},
+	{10, 100, "Graph size 10 with index too big (100)"},
+	{10, -1, "Graph size 10 with negative index (-1)"},
+	{10, -2, "Graph size 10 with negative index (-2)"},
+	{10, -10, "Graph size 10 with negative index (-10)"},
+}
+
+func TestDFSPanicBadArgsForSource(t *testing.T) {
+	for _, tt := range shouldPanic {
+		badArgsHarness(t, tt.size, tt.source, tt.msg)
+	}
+}
+
+func badArgsHarness(t *testing.T, size, source int, msg string) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("Should have panicked! %s", msg)
+		} else {
+			t.Logf("Recovered panic on %v\n", r)
+		}
+	}()
+
+	_ = BuildDFS(graph.NewAdjList(size), source)
+}
