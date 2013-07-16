@@ -4,6 +4,7 @@ import (
 	"github.com/aybabtme/graph"
 )
 
+// CC holds a representation of the connected components in a graph
 type CC interface {
 	// Connected tells whether vertices v and w are connected
 	Connected(v, w int) bool
@@ -18,7 +19,8 @@ type connectedComp struct {
 	count int
 }
 
-func BuildCC(g graph.Graph) CC {
+// BuildCC builds a Connected Component representation of graph g
+func BuildCC(g graph.Ungraph) CC {
 
 	cc := connectedComp{
 		id:    make([]int, g.V()),

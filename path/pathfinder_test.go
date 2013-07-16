@@ -5,21 +5,32 @@ import (
 	"testing"
 )
 
-type pfFact func(graph.Graph, int) (PathFinder, error)
+type pfFact func(graph.Ungraph, int) (PathFinder, error)
 
-var pathFinders = []pfFact{
-	BuildDFS,
-	BuildBFS,
-}
+type graphFact func(int) graph.Ungraph
 
-func TestDFSWithSimpleDisconnectedGraph(t *testing.T) {
-	for _, pf := range pathFinders {
-		simpleGraphHarness(t, pf)
+var (
+	pathFinders = []pfFact{
+		BuildDFS,
+		BuildBFS,
+	}
+
+	graphMakers = []graphFact{
+		graph.NewAdjList,
+		graph.NewAdjMatrix,
+	}
+)
+
+func TestSearchWithSimpleDisconnectedUngraph(t *testing.T) {
+	for _, gf := range graphMakers {
+		for _, pf := range pathFinders {
+			simpleUngraphHarness(t, gf, pf)
+		}
 	}
 }
 
-func simpleGraphHarness(t *testing.T, pfFactory pfFact) {
-	g := graph.NewAdjList(13)
+func simpleUngraphHarness(t *testing.T, gf graphFact, pfFactory pfFact) {
+	g := gf(13)
 
 	expectPathTo := []int{0, 1, 2, 3, 4, 5, 6}
 	expectNoPathTo := []int{7, 8, 9, 10, 11, 12}
@@ -101,29 +112,37 @@ var shouldHaveErr = []struct {
 	{0, 0, "Empty graph with index of 0"},
 	{0, 1, "Empty graph with index too big (1)"},
 	{0, 10, "Empty graph with index too big (10)"},
-	{1, 1, "Graph size 1 with index too big (1)"},
-	{1, 2, "Graph size 1 with index too big (2)"},
-	{1, 10, "Graph size 1 with index too big (10)"},
-	{1, -1, "Graph size 1 with negative index (-1)"},
-	{1, -2, "Graph size 1 with negative index (-2)"},
-	{1, -10, "Graph size 1 with negative index (-10)"},
-	{10, 10, "Graph size 10 with index too big (10)"},
-	{10, 11, "Graph size 10 with index too big (11)"},
-	{10, 100, "Graph size 10 with index too big (100)"},
-	{10, -1, "Graph size 10 with negative index (-1)"},
-	{10, -2, "Graph size 10 with negative index (-2)"},
-	{10, -10, "Graph size 10 with negative index (-10)"},
+	{1, 1, "Ungraph size 1 with index too big (1)"},
+	{1, 2, "Ungraph size 1 with index too big (2)"},
+	{1, 10, "Ungraph size 1 with index too big (10)"},
+	{1, -1, "Ungraph size 1 with negative index (-1)"},
+	{1, -2, "Ungraph size 1 with negative index (-2)"},
+	{1, -10, "Ungraph size 1 with negative index (-10)"},
+	{10, 10, "Ungraph size 10 with index too big (10)"},
+	{10, 11, "Ungraph size 10 with index too big (11)"},
+	{10, 100, "Ungraph size 10 with index too big (100)"},
+	{10, -1, "Ungraph size 10 with negative index (-1)"},
+	{10, -2, "Ungraph size 10 with negative index (-2)"},
+	{10, -10, "Ungraph size 10 with negative index (-10)"},
 }
 
-func TestDFSPanicBadArgsForSource(t *testing.T) {
-	for _, pf := range pathFinders {
-		for _, tt := range shouldHaveErr {
-			badArgsHarness(t, pf, tt.size, tt.source, tt.msg)
+func TestSearchPanicBadArgsForSource(t *testing.T) {
+	for _, gf := range graphMakers {
+		for _, pf := range pathFinders {
+			for _, tt := range shouldHaveErr {
+				badArgsHarness(t, gf, pf, tt.size, tt.source, tt.msg)
+			}
 		}
 	}
 }
 
-func badArgsHarness(t *testing.T, pf pfFact, size, source int, msg string) {
+func badArgsHarness(
+	t *testing.T,
+	gf graphFact,
+	pf pfFact,
+	size, source int,
+	msg string,
+) {
 	defer func() {
 		if r := recover(); r != nil {
 			t.Errorf("Test \"%s\" panicked with message, %v", msg, r)
