@@ -9,6 +9,7 @@ type pfFact func(graph.Graph, int) (PathFinder, error)
 
 var pathFinders = []pfFact{
 	BuildDFS,
+	BuildBFS,
 }
 
 func TestDFSWithSimpleDisconnectedGraph(t *testing.T) {
