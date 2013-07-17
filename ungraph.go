@@ -6,6 +6,7 @@ type adjList struct {
 	adj [][]int
 }
 
+// NewAdjListGraph returns a Graph implemented with an adjacency vertex list
 func NewAdjListGraph(v int) Graph {
 	return adjList{
 		v:   v,
@@ -40,6 +41,7 @@ type adjMatrix struct {
 	matrix [][]bool
 }
 
+// NewMatrixGraph returns a Graph implemented with an adjacency matrix
 func NewMatrixGraph(v int) Graph {
 
 	matrix := make([][]bool, v)

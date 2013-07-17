@@ -12,7 +12,7 @@ type tremauxDFS struct {
 	edgeTo []int
 }
 
-// BuildDFS builds a Depth First Search PathFinder for graph g starting from
+// BuildDFS builds a depth first search PathFinder for graph g starting from
 // source s
 func BuildDFS(g graph.Graph, s int) (PathFinder, error) {
 

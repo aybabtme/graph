@@ -9,7 +9,7 @@ import (
 // Graph is a undirected graph with V vertices
 type Graph interface {
 	fmt.GoStringer
-	// AddEdge adds an edge v-w
+	// AddEdge adds an edge from v to w.
 	AddEdge(v, w int)
 	// Adj is a slice of vertices adjacent to v
 	Adj(v int) []int
@@ -43,10 +43,14 @@ func stringify(g Graph) string {
 	General graph processing functions
 */
 
+// Degree is the degree of vertex v in graph g.  In a directed graph, this is
+// the out-degree of v.
 func Degree(g Graph, v int) int {
 	return len(g.Adj(v))
 }
 
+// MaxDegree is the maximum degree in graph g.  In a directed graph, this is
+// the max out-degree in g.
 func MaxDegree(g Graph) int {
 	max := 0
 	deg := 0
@@ -59,6 +63,8 @@ func MaxDegree(g Graph) int {
 	return max
 }
 
+// MinDegree is the minimum degree in graph g.  In a directed graph, this is
+// the min out-degree in g.
 func MinDegree(g Graph) int {
 	min := Degree(g, g.V())
 	deg := 0
@@ -71,12 +77,15 @@ func MinDegree(g Graph) int {
 	return min
 }
 
+// AvgDegree is the average degree in graph g.  In a directed graph, this is
+// the average out-degree in g.
 func AvgDegree(g Graph) float64 {
 	e := float64(g.E())
 	v := float64(g.V())
 	return 2.0 * e / v
 }
 
+// NumSelfLoop is the number of vertices in g that have an edge to themselves.
 func NumSelfLoop(g Graph) int {
 	c := 0
 	for v := 0; v < g.V(); v++ {
@@ -90,11 +99,8 @@ func NumSelfLoop(g Graph) int {
 	return c / 2
 }
 
+// HasCycle returns if graph g has any cycle.
 func HasCycle(g Graph) bool {
-
-	if NumSelfLoop(g) != 0 {
-		return true
-	}
 
 	marked := make([]bool, g.V())
 	var visit func(v, u int) bool
@@ -121,6 +127,7 @@ func HasCycle(g Graph) bool {
 	return false
 }
 
+// IsBipartite returns if every vertex in graph g can be colored with only two // colors, while never sharing the same color an adjacent vertex
 func IsBipartite(g Graph) bool {
 	marked := make([]bool, g.V())
 	color := make([]bool, g.V())

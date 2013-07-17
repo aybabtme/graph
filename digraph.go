@@ -6,8 +6,10 @@ import (
 	"strconv"
 )
 
+// Digraph is a directed graph
 type Digraph interface {
 	Graph
+	// Reverse returns the reverse of this digraph
 	Reverse() Digraph
 }
 
@@ -17,6 +19,7 @@ type diAdjList struct {
 	adj [][]int
 }
 
+// NewDigraph returns a digraph with v vertices, all disconnected
 func NewDigraph(v int) Digraph {
 	return diAdjList{
 		v:   v,
@@ -35,6 +38,7 @@ func (di diAdjList) Reverse() Digraph {
 	return rev
 }
 
+// AddEdge adds an edge from v to w, but not from w to v
 func (di diAdjList) AddEdge(v, w int) {
 	di.adj[v] = append(di.adj[v], w)
 	di.e++
@@ -72,7 +76,8 @@ func (di diAdjList) GoString() string {
 	return output.String()
 }
 
-type Dag interface {
+// DAG is a directed acyclic graph
+type DAG interface {
 	Digraph
 	Sort() []int
 }
@@ -81,16 +86,18 @@ type dag struct {
 	diAdjList
 }
 
-func NewDag(d Digraph) (Dag, error) {
+// NewDAG returns a DAG built from digraph d, if d has no cycle. Otherwise
+// it returns an error
+func NewDAG(d Digraph) (DAG, error) {
 	di, ok := d.(diAdjList)
 	if !ok {
 		panic("Not an adjacency list digraph")
 	}
 	if len(DirectedCycle(di)) == 0 {
 		return dag{di}, nil
-	} else {
-		return dag{}, errors.New("Digraph has at least one cycle")
 	}
+	return dag{}, errors.New("Digraph has at least one cycle")
+
 }
 
 func (d dag) Sort() []int {
@@ -119,6 +126,7 @@ func (d dag) Sort() []int {
 	return revPostOrder
 }
 
+// DirectedCycle returns a cycle in digraph di, if there is one
 func DirectedCycle(di Digraph) []int {
 
 	marked := make([]bool, di.V())
