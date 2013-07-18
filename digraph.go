@@ -89,10 +89,7 @@ type dag struct {
 // NewDAG returns a DAG built from digraph d, if d has no cycle. Otherwise
 // it returns an error
 func NewDAG(d Digraph) (DAG, error) {
-	di, ok := d.(diAdjList)
-	if !ok {
-		panic("Not an adjacency list digraph")
-	}
+	di, _ := d.(diAdjList)
 	if len(DirectedCycle(di)) == 0 {
 		return dag{di}, nil
 	}
@@ -123,7 +120,7 @@ func (d dag) Sort() []int {
 		}
 	}
 
-	return revPostOrder
+	return reverse(revPostOrder)
 }
 
 // DirectedCycle returns a cycle in digraph di, if there is one
@@ -132,42 +129,46 @@ func DirectedCycle(di Digraph) []int {
 	marked := make([]bool, di.V())
 	edgeTo := make([]int, di.V())
 	onStack := make([]bool, di.V())
-
 	var cycle []int
 	hasCycle := func() bool {
 		return len(cycle) != 0
 	}
 
-	var visit func(v int)
+	var dfs func(v int)
 
-	visit = func(v int) {
+	dfs = func(v int) {
 		onStack[v] = true
 		marked[v] = true
-		for _, adj := range di.Adj(v) {
+		for _, w := range di.Adj(v) {
 			if hasCycle() {
 				return
-			} else if !marked[v] {
-				edgeTo[adj] = v
-				visit(adj)
-			} else if onStack[adj] {
-				for x := v; x != adj; x = edgeTo[x] {
+			} else if !marked[w] {
+				edgeTo[w] = v
+				dfs(w)
+			} else if onStack[w] {
+				for x := v; x != w; x = edgeTo[x] {
 					cycle = append(cycle, x)
 				}
-				cycle = append(cycle, adj)
+				cycle = append(cycle, w)
 				cycle = append(cycle, v)
 			}
-			onStack[v] = false
 		}
+		onStack[v] = false
 	}
 
 	for v := 0; v < di.V(); v++ {
 		if !marked[v] {
-			visit(v)
-			if hasCycle() {
-				return cycle
-			}
+			dfs(v)
 		}
 	}
 
-	return []int{}
+	return reverse(cycle)
+}
+
+func reverse(s []int) []int {
+	for i := 0; i < len(s)/2; i++ {
+		opposite := len(s) - 1 - i
+		s[i], s[opposite] = s[opposite], s[i]
+	}
+	return s
 }

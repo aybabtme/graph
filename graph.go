@@ -85,8 +85,8 @@ func AvgDegree(g Graph) float64 {
 	return 2.0 * e / v
 }
 
-// NumSelfLoop is the number of vertices in g that have an edge to themselves.
-func NumSelfLoop(g Graph) int {
+// numSelfLoop is the number of vertices in g that have an edge to themselves.
+func numSelfLoop(g Graph) int {
 	c := 0
 	for v := 0; v < g.V(); v++ {
 		for _, w := range g.Adj(v) {
