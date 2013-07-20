@@ -89,28 +89,26 @@ func AvgDegree(g Graph) float64 {
 func HasCycle(g Graph) bool {
 
 	marked := make([]bool, g.V())
-	var visit func(v, u int) bool
+	hasCycle := false
+	var dfs func(v, u int)
 
-	visit = func(v, u int) bool {
+	dfs = func(v, u int) {
 		marked[v] = true
 		for _, adj := range g.Adj(v) {
-			if marked[adj] {
-				visit(adj, v)
-			} else if u != adj {
-				return true
+			if !marked[adj] {
+				dfs(adj, v)
+			} else if adj != u {
+				hasCycle = true
 			}
 		}
-		return false
 	}
 
-	for v := 0; v < g.V(); v++ {
-		if !marked[v] {
-			if visit(v, v) {
-				return true
-			}
+	for s := 0; s < g.V(); s++ {
+		if !marked[s] {
+			dfs(s, s)
 		}
 	}
-	return false
+	return hasCycle
 }
 
 // IsBipartite returns if every vertex in graph g can be colored with only two // colors, while never sharing the same color an adjacent vertex
@@ -118,28 +116,27 @@ func IsBipartite(g Graph) bool {
 	marked := make([]bool, g.V())
 	color := make([]bool, g.V())
 
-	var visit func(v int) bool
+	isTwoColor := true
 
-	visit = func(v int) bool {
+	var dfs func(v int)
+
+	dfs = func(v int) {
 		marked[v] = true
 		for _, adj := range g.Adj(v) {
-			if marked[adj] {
-				color[v] = !color[adj]
-				visit(adj)
+			if !marked[adj] {
+				color[adj] = !color[v]
+				dfs(adj)
 			} else if color[v] == color[adj] {
-				return false
-			}
-		}
-		return true
-	}
-
-	for v := 0; v < g.V(); v++ {
-		if !marked[v] {
-			if !visit(v) {
-				return false
+				isTwoColor = false
 			}
 		}
 	}
 
-	return true
+	for s := 0; s < g.V(); s++ {
+		if !marked[s] {
+			dfs(s)
+		}
+	}
+
+	return isTwoColor
 }

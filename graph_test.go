@@ -24,22 +24,7 @@ var graphs = map[int][]struct {
 	// +-+      +-+     +-+
 	// It doesn't have cycles
 	BipartiteUngraph: {{0, 1}, {1, 2}},
-	CycleGraph:       {{0, 1}, {1, 2}},
-
-	// This is a bipartite digraph
-	// +-+        +-+
-	// |0|------->|1|
-	// +-+        +-+
-	//  ^          |
-	//  |          |
-	//  |          v
-	// +-+        +-+
-	// |3|<-------|2|
-	// +-+        +-+
-	BipartiteDigraph: {
-		{0, 1}, {1, 2},
-		{3, 0}, {2, 3},
-	},
+	NotCycleGraph:    {{0, 1}, {1, 2}},
 
 	// This is NOT a bipartite graph
 	// +-+      +-+
@@ -55,21 +40,7 @@ var graphs = map[int][]struct {
 		{1, 2},
 		{2, 0},
 	},
-	NotCycleGraph: {
-		{0, 1},
-		{1, 2},
-		{2, 0},
-	},
-
-	// This is NOT a bipartite digraph
-	// +-+      +-+
-	// |0|----->|1|
-	// +-+      +-+
-	//  ^        |
-	//  |   +-+  |
-	//  +---|2|+-+
-	//      +-+
-	NotBipartiteDigraph: {
+	CycleGraph: {
 		{0, 1},
 		{1, 2},
 		{2, 0},
@@ -118,58 +89,44 @@ func TestAdjGraphIsBipartite(t *testing.T) {
 	}
 }
 
-func TestDigraphIsBipartite(t *testing.T) {
-	di := buildDigraph(NewDigraph, BipartiteDigraph)
-	if !IsBipartite(di) {
-		t.Fatalf("Digraph should be bipartite, %#v", di)
-	}
-}
-
 func TestMatrixGraphIsNotBipartite(t *testing.T) {
 	g := buildGraph(NewMatrixGraph, NotBipartiteUngraph)
-	if !IsBipartite(g) {
+	if IsBipartite(g) {
 		t.Fatalf("Matrix Graph should be bipartite, %#v", g)
 	}
 }
 
 func TestAdjGraphIsNotBipartite(t *testing.T) {
 	g := buildGraph(NewAdjListGraph, NotBipartiteUngraph)
-	if !IsBipartite(g) {
+	if IsBipartite(g) {
 		t.Fatalf("Adj Graph should be bipartite, %#v", g)
-	}
-}
-
-func TestDigraphIsNotBipartite(t *testing.T) {
-	di := buildDigraph(NewDigraph, NotBipartiteDigraph)
-	if IsBipartite(di) {
-		t.Fatalf("Digraph should not be bipartite, %#v", di)
 	}
 }
 
 func TestMatrixGraphHasCycle(t *testing.T) {
 	g := buildGraph(NewMatrixGraph, CycleGraph)
-	if HasCycle(g) {
+	if !HasCycle(g) {
 		t.Fatalf("Matrix Graph should have cycle, %#v", g)
 	}
 }
 
 func TestAdjGraphHasCycle(t *testing.T) {
 	g := buildGraph(NewAdjListGraph, CycleGraph)
-	if HasCycle(g) {
+	if !HasCycle(g) {
 		t.Fatalf("Adj Graph should have cycle, %#v", g)
 	}
 }
 
 func TestMatrixGraphHasNoCycle(t *testing.T) {
 	g := buildGraph(NewMatrixGraph, NotCycleGraph)
-	if !HasCycle(g) {
+	if HasCycle(g) {
 		t.Fatalf("Matrix Graph should not have cycle, %#v", g)
 	}
 }
 
 func TestAdjGraphHasNoCycle(t *testing.T) {
 	g := buildGraph(NewAdjListGraph, NotCycleGraph)
-	if !HasCycle(g) {
+	if HasCycle(g) {
 		t.Fatalf("Adj Graph should not have cycle, %#v", g)
 	}
 }

@@ -11,12 +11,13 @@ type kruskal struct {
 	weight float64
 }
 
-// BuildKruskalMST builds the MST for weighted graph wg
-func BuildKruskalMST(wg graph.WeightGraph) MST {
+// BuildKruskalMST builds the MST for a weighted graph wg.
+// This is O(E log E). If edges arrive sorted, E log V
+func BuildKruskalMST(wg *graph.WeightGraph) MST {
 
 	var k kruskal
 
-	var pq edgePQ
+	var pq *edgePQ
 	heap.Init(pq)
 	for _, e := range wg.Edges() {
 		heap.Push(pq, e)
@@ -33,15 +34,17 @@ func BuildKruskalMST(wg graph.WeightGraph) MST {
 		v := e.Either()
 		w := e.Other(v)
 
-		if uf.Connected(v, w) {
+		if !uf.Connected(v, w) {
 			uf.Union(v, w)
 			k.tree = append(k.tree, e)
+			k.weight += e.Weight()
 		}
 	}
 
 	return k
 }
 
+// Edges is the edges that form the MST of this weighted graph
 func (k kruskal) Edges() []graph.Edge {
 	return k.tree
 }

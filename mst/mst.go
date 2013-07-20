@@ -35,20 +35,20 @@ func (e edgePQ) Swap(v, w int) {
 	e[w].index = w
 }
 
-func (e edgePQ) Push(x interface{}) {
+func (e *edgePQ) Push(x interface{}) {
 	n := e.Len()
 	item := edgeItem{
 		x.(*graph.Edge),
 		n,
 	}
-	e = append(e, item)
+	*e = append(*e, item)
 }
 
-func (e edgePQ) Pop() interface{} {
-	old := e
+func (e *edgePQ) Pop() interface{} {
+	old := *e
 	n := len(old)
 	item := old[n-1]
 	item.index = -1 // for safety
-	e = old[0 : n-1]
+	*e = old[0 : n-1]
 	return item.edge
 }

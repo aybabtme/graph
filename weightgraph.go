@@ -7,7 +7,6 @@ import (
 
 // WeightGraph is a graph with weighted edges.
 type WeightGraph struct {
-	fmt.GoStringer
 	adj [][]Edge
 	e   int
 }
@@ -76,7 +75,6 @@ func (w *WeightGraph) GoString() string {
 
 // Edge is a weighted edge in a weighted graph
 type Edge struct {
-	fmt.GoStringer
 	weight float64
 	from   int
 	to     int
@@ -99,6 +97,11 @@ func (e *Edge) Other(v int) int {
 		return e.to
 	}
 	return e.from
+}
+
+// Weight tells the weight of this edge
+func (e *Edge) Weight() float64 {
+	return e.weight
 }
 
 // GoString represents this edge in a directed, weighted fashion
