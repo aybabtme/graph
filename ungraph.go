@@ -1,85 +1,46 @@
 package graph
 
-type adjList struct {
+// Ungraph is an adjacency list undirected graph. It consumes 2E + V
+// spaces.
+type Ungraph struct {
 	v   int
-	e   int
+	e   *int
 	adj [][]int
 }
 
-// NewAdjListGraph returns a Graph implemented with an adjacency vertex list
-func NewAdjListGraph(v int) Graph {
-	return adjList{
+// NewGraph returns a Graph of size v implemented with an adjacency vertex
+// list.
+func NewGraph(v int) Ungraph {
+	return Ungraph{
 		v:   v,
-		e:   0,
+		e:   new(int),
 		adj: make([][]int, v),
 	}
 }
 
-func (a adjList) AddEdge(v, w int) {
+// AddEdge adds an edge from v to w. This is O(1).
+func (a Ungraph) AddEdge(v, w int) {
 	a.adj[v] = append(a.adj[v], w)
 	a.adj[w] = append(a.adj[w], v)
-	a.e++
+	(*a.e)++
 }
 
-func (a adjList) Adj(v int) []int {
+// Adj is a slice of vertices adjacent to v. This is O(E).
+func (a Ungraph) Adj(v int) []int {
 	return a.adj[v]
 }
 
-func (a adjList) V() int {
+// V is the number of vertices. This is O(1).
+func (a Ungraph) V() int {
 	return a.v
 }
 
-func (a adjList) E() int {
-	return a.e
+// E is the number of edges. This is O(1).
+func (a Ungraph) E() int {
+	return *a.e
 }
 
-func (a adjList) GoString() string {
-	return stringify(a)
-}
-
-type adjMatrix struct {
-	matrix [][]bool
-}
-
-// NewMatrixGraph returns a Graph implemented with an adjacency matrix
-func NewMatrixGraph(v int) Graph {
-
-	matrix := make([][]bool, v)
-
-	for i := 0; i < v; i++ {
-		matrix[i] = make([]bool, v)
-	}
-
-	return adjMatrix{matrix: matrix}
-}
-
-func (a adjMatrix) AddEdge(v, w int) {
-	a.matrix[v][w] = true
-	a.matrix[w][v] = true
-}
-
-func (a adjMatrix) Adj(v int) []int {
-	var vertices []int
-	for i, ok := range a.matrix[v] {
-		if ok {
-			vertices = append(vertices, i)
-		}
-	}
-	return vertices
-}
-
-func (a adjMatrix) V() int {
-	return len(a.matrix)
-}
-
-func (a adjMatrix) E() int {
-	c := 0
-	for v := range a.matrix {
-		c += len(a.Adj(v))
-	}
-	return c
-}
-
-func (a adjMatrix) GoString() string {
+// GoString represents this graph as a string.
+func (a Ungraph) GoString() string {
 	return stringify(a)
 }

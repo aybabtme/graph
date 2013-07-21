@@ -7,30 +7,20 @@ import (
 
 type pfFact func(graph.Graph, int) (PathFinder, error)
 
-type graphFact func(int) graph.Graph
-
-var (
-	pathFinders = []pfFact{
-		BuildDFS,
-		BuildBFS,
-	}
-
-	graphMakers = []graphFact{
-		graph.NewAdjListGraph,
-		graph.NewMatrixGraph,
-	}
-)
-
-func TestSearchWithSimpleDisconnectedGraph(t *testing.T) {
-	for _, gf := range graphMakers {
-		for _, pf := range pathFinders {
-			simpleGraphHarness(t, gf, pf)
-		}
-	}
+var pathFinders = []pfFact{
+	BuildDFS,
+	BuildBFS,
 }
 
-func simpleGraphHarness(t *testing.T, gf graphFact, pfFactory pfFact) {
-	g := gf(13)
+func TestSearchWithSimpleDisconnectedGraph(t *testing.T) {
+	for _, pf := range pathFinders {
+		simpleGraphHarness(t, pf)
+	}
+
+}
+
+func simpleGraphHarness(t *testing.T, pfFactory pfFact) {
+	g := graph.NewGraph(13)
 
 	expectPathTo := []int{0, 1, 2, 3, 4, 5, 6}
 	expectNoPathTo := []int{7, 8, 9, 10, 11, 12}
@@ -127,18 +117,15 @@ var shouldHaveErr = []struct {
 }
 
 func TestSearchPanicBadArgsForSource(t *testing.T) {
-	for _, gf := range graphMakers {
-		for _, pf := range pathFinders {
-			for _, tt := range shouldHaveErr {
-				badArgsHarness(t, gf, pf, tt.size, tt.source, tt.msg)
-			}
+	for _, pf := range pathFinders {
+		for _, tt := range shouldHaveErr {
+			badArgsHarness(t, pf, tt.size, tt.source, tt.msg)
 		}
 	}
 }
 
 func badArgsHarness(
 	t *testing.T,
-	gf graphFact,
 	pf pfFact,
 	size, source int,
 	msg string,
@@ -149,7 +136,7 @@ func badArgsHarness(
 		}
 	}()
 
-	if _, err := pf(graph.NewAdjListGraph(size), source); err == nil {
+	if _, err := pf(graph.NewGraph(size), source); err == nil {
 		t.Errorf("%s, should have error", msg)
 	}
 }

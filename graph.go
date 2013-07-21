@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-// Graph is a undirected graph with V vertices
+// Graph is a graph with V vertices.
 type Graph interface {
 	fmt.GoStringer
 	// AddEdge adds an edge from v to w.
@@ -18,30 +18,6 @@ type Graph interface {
 	// E is the number of edges
 	E() int
 }
-
-func stringify(g Graph) string {
-	var output bytes.Buffer
-
-	do := func(n int, err error) {
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	for v := 0; v < g.V(); v++ {
-		for _, w := range g.Adj(v) {
-			do(output.WriteString(strconv.Itoa(v)))
-			do(output.WriteRune('-'))
-			do(output.WriteString(strconv.Itoa(w)))
-			do(output.WriteRune('\n'))
-		}
-	}
-	return output.String()
-}
-
-/*
-	General graph processing functions
-*/
 
 // Degree is the degree of vertex v in graph g.  In a directed graph, this is
 // the out-degree of v.
@@ -66,7 +42,7 @@ func MaxDegree(g Graph) int {
 // MinDegree is the minimum degree in graph g.  In a directed graph, this is
 // the min out-degree in g.
 func MinDegree(g Graph) int {
-	min := Degree(g, g.V())
+	min := Degree(g, g.V()-1)
 	deg := 0
 	for v := 0; v < g.V()-1; v++ {
 		deg = Degree(g, v)
@@ -139,4 +115,24 @@ func IsBipartite(g Graph) bool {
 	}
 
 	return isTwoColor
+}
+
+func stringify(g Graph) string {
+	var output bytes.Buffer
+
+	do := func(n int, err error) {
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	for v := 0; v < g.V(); v++ {
+		for _, w := range g.Adj(v) {
+			do(output.WriteString(strconv.Itoa(v)))
+			do(output.WriteRune('-'))
+			do(output.WriteString(strconv.Itoa(w)))
+			do(output.WriteRune('\n'))
+		}
+	}
+	return output.String()
 }

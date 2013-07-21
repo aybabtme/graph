@@ -6,14 +6,8 @@ import (
 	"strconv"
 )
 
-// Digraph is a directed graph
-type Digraph interface {
-	Graph
-	// Reverse returns the reverse of this digraph
-	Reverse() Digraph
-}
-
-type diAdjList struct {
+// Digraph is a directed graph implementation using an adjacency list
+type Digraph struct {
 	v   int
 	e   int
 	adj [][]int
@@ -21,14 +15,36 @@ type diAdjList struct {
 
 // NewDigraph returns a digraph with v vertices, all disconnected
 func NewDigraph(v int) Digraph {
-	return diAdjList{
+	return Digraph{
 		v:   v,
 		e:   0,
 		adj: make([][]int, v),
 	}
 }
 
-func (di diAdjList) Reverse() Digraph {
+// AddEdge adds an edge from v to w, but not from w to v. This is O(1).
+func (di *Digraph) AddEdge(v, w int) {
+	di.adj[v] = append(di.adj[v], w)
+	di.e++
+}
+
+// Adj is a slice of vertices adjacent to v. This is O(E)
+func (di *Digraph) Adj(v int) []int {
+	return di.adj[v]
+}
+
+// V is the number of vertices.
+func (di *Digraph) V() int {
+	return di.v
+}
+
+// E is the number of edges.
+func (di *Digraph) E() int {
+	return di.e
+}
+
+// Reverse returns the reverse of this digraph
+func (di *Digraph) Reverse() Digraph {
 	rev := NewDigraph(di.V())
 	for v := 0; v < di.V(); v++ {
 		for _, w := range di.Adj(v) {
@@ -38,25 +54,8 @@ func (di diAdjList) Reverse() Digraph {
 	return rev
 }
 
-// AddEdge adds an edge from v to w, but not from w to v
-func (di diAdjList) AddEdge(v, w int) {
-	di.adj[v] = append(di.adj[v], w)
-	di.e++
-}
-
-func (di diAdjList) Adj(v int) []int {
-	return di.adj[v]
-}
-
-func (di diAdjList) V() int {
-	return di.v
-}
-
-func (di diAdjList) E() int {
-	return di.e
-}
-
-func (di diAdjList) GoString() string {
+// GoString represents this graph as a string.
+func (di *Digraph) GoString() string {
 	var output bytes.Buffer
 
 	do := func(n int, err error) {
@@ -76,28 +75,24 @@ func (di diAdjList) GoString() string {
 	return output.String()
 }
 
-// DAG is a directed acyclic graph
-type DAG interface {
-	Digraph
-	Sort() []int
-}
-
-type dag struct {
-	diAdjList
+// DAG is a directed acyclic graph implemented with an adjacency list
+// digraph.
+type DAG struct {
+	*Digraph
 }
 
 // NewDAG returns a DAG built from digraph d, if d has no cycle. Otherwise
-// it returns an error
+// it returns an error.
 func NewDAG(d Digraph) (DAG, error) {
-	di, _ := d.(diAdjList)
-	if len(DirectedCycle(di)) == 0 {
-		return dag{di}, nil
+	if len(DirectedCycle(d)) == 0 {
+		return DAG{&d}, nil
 	}
-	return dag{}, errors.New("Digraph has at least one cycle")
+	return DAG{}, errors.New("Digraph has at least one cycle")
 
 }
 
-func (d dag) Sort() []int {
+// Sort gives the topological sort of this DAG.
+func (d *DAG) Sort() []int {
 	marked := make([]bool, d.V())
 
 	var revPostOrder []int
@@ -123,7 +118,7 @@ func (d dag) Sort() []int {
 	return reverse(revPostOrder)
 }
 
-// DirectedCycle returns a cycle in digraph di, if there is one
+// DirectedCycle returns a cycle in digraph di, if there is one.
 func DirectedCycle(di Digraph) []int {
 
 	marked := make([]bool, di.V())

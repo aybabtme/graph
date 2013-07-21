@@ -1,8 +1,58 @@
 package graph
 
 import (
+	"sort"
 	"testing"
 )
+
+func TestDigraphHasVertices(t *testing.T) {
+	expected := 3
+
+	di := NewDigraph(expected)
+	actual := di.V()
+	if expected != actual {
+		t.Fatalf("Expected %d vertices, got %d", expected, actual)
+	}
+}
+
+func TestDigraphHasEdges(t *testing.T) {
+	expected := 3
+
+	di := NewDigraph(expected + 1)
+	di.AddEdge(0, 1)
+	di.AddEdge(1, 2)
+	di.AddEdge(2, 3)
+
+	actual := di.E()
+	if expected != actual {
+		t.Fatalf("Expected %d edges, got %d", expected, actual)
+	}
+}
+
+func TestDigraphAddEdgeThenHasAdjacent(t *testing.T) {
+
+	expected := []int{1, 2, 3, 4, 5}
+
+	di := NewDigraph(len(expected) + 1)
+
+	for _, to := range expected {
+		di.AddEdge(0, to)
+	}
+
+	actual := di.Adj(0)
+	sort.Sort(sort.IntSlice(actual))
+
+	if len(expected) != len(actual) {
+		t.Fatalf("Expected length of %d but was %d",
+			len(expected), len(actual))
+	}
+
+	for i := 0; i < len(actual); i++ {
+		if actual[i] != expected[i] {
+			t.Errorf("Expected vertice %d but was %d", expected[i], actual[i])
+		}
+	}
+}
 
 // This digraph is also a Dag:
 //
@@ -52,6 +102,16 @@ func digraphWithCycle() Digraph {
 	return di
 }
 
+func TestDigraphCanStringify(t *testing.T) {
+	for _, f := range []func() Digraph{
+		digraphWithoutCycle,
+		digraphWithCycle,
+	} {
+		g := f()
+		g.GoString()
+	}
+}
+
 func TestDigraphIsDag(t *testing.T) {
 	_, err := NewDAG(digraphWithoutCycle())
 	if err != nil {
@@ -84,10 +144,14 @@ func TestDagCanSort(t *testing.T) {
 
 }
 
-func TestDigraphCanReverse(t *testing.T) {
-	digraphWithCycle().Reverse()
-	digraphWithoutCycle().Reverse()
+func TestDigraphWithCycleCanReverse(t *testing.T) {
+	di := digraphWithCycle()
+	di.Reverse()
+}
 
+func TestDigraphWithoutCycleCanReverse(t *testing.T) {
+	di := digraphWithoutCycle()
+	di.Reverse()
 }
 
 func TestDigraphHasNoCycle(t *testing.T) {
