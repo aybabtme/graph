@@ -124,8 +124,8 @@ func (scc strongComp) ID(v int) int {
 	return scc.id[v]
 }
 
-// DFO holds information regarding the paths in a graph when traversed in
-// depth-first search.
+// DFO holds information regarding the ordered paths in a graph when traversed
+// in depth-first search.
 type DFO struct {
 	// Pre is a slice of the vertices in preorder.
 	Pre []int

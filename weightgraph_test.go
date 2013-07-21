@@ -38,7 +38,7 @@ func TestWeightGraphCanAddAndCountEdges(t *testing.T) {
 
 func TestEdgeHaveValues(t *testing.T) {
 	// Small steps by 0.05% increment
-	for i := -10000.0; i < 10000.0; i += 0.0005*math.Abs(i) + 0.0001 {
+	for i := -1000.0; i < 1000.0; i += 0.0005*math.Abs(i) + 0.0001 {
 		edge := NewEdge(0, 1, i)
 		if i != edge.Weight() {
 			t.Errorf("Should have weight %f but was %f", i, edge.Weight())

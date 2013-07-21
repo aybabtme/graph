@@ -93,6 +93,9 @@ func NewDAG(d Digraph) (DAG, error) {
 
 // Sort gives the topological sort of this DAG.
 func (d *DAG) Sort() []int {
+	// Why aren't we using the path.BuildDFO(di) function?
+	// - It would result in an import cycle, that is why.
+
 	marked := make([]bool, d.V())
 
 	var revPostOrder []int

@@ -8,3 +8,12 @@ type PathFinder interface {
 	// PathTo returns the path from the source to the destination
 	PathTo(destination int) []int
 }
+
+func reverse(s []int) []int {
+	var opposite int
+	for i := 0; i < len(s)/2; i++ {
+		opposite = len(s) - 1 - i
+		s[i], s[opposite] = s[opposite], s[i]
+	}
+	return s
+}

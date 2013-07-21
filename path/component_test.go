@@ -80,3 +80,71 @@ func checkNoneConnected(t *testing.T, cc CC, firstComp, secondComp []int) {
 		}
 	}
 }
+
+var (
+	// We use this graph for DFO testing
+	//
+	//  /---------------------\
+	//  |                     v
+	// +--+   +--+   +--+    +--+      +--+   +--+
+	// | 1|<--| 0|<--| 2|  /-| 6|<-----| 7|<--| 8|
+	// +--+   +--+   +--+  | +--+      +--+   +--+
+	//         |      |    |  \------\
+	//         v      v    |         v
+	//        +--+   +--+  |        +--+   +--+
+	//        | 5|<--| 3|  |   /----| 9|-->|10|
+	//        +--+   +--+  |   |    +--+   +--+
+	//         |           |   |     |
+	//         v           |   v     v
+	//        +--+         |  +--+  +--+
+	//        | 4|<--------/  |11|->|12|
+	//        +--+            +--+  +--+
+	//
+	graphEdges = []struct{ from, to int }{
+		// The order matters to match the expectations
+		{0, 5}, {0, 1},
+		{1, 6},
+		{2, 0}, {2, 3},
+		{3, 5},
+		// 4 has no outgoing edges
+		{5, 4},
+		{6, 4}, {6, 9},
+		{7, 6},
+		{8, 7},
+		{9, 11}, {9, 12}, {9, 10},
+		{11, 12},
+	}
+	// We know its orderings should be :
+	preOrder     = []int{0, 5, 4, 1, 6, 9, 11, 12, 10, 2, 3, 7, 8}
+	postOrder    = []int{4, 5, 12, 11, 10, 9, 6, 1, 0, 3, 2, 7, 8}
+	revPosrOrder = []int{8, 7, 2, 3, 0, 1, 6, 9, 10, 11, 12, 5, 4}
+)
+
+func TestDFOMatchesKnownOutput(t *testing.T) {
+	di := graph.NewDigraph(13)
+	for _, edge := range graphEdges {
+		di.AddEdge(edge.from, edge.to)
+	}
+
+	dfo := BuildDFO(di)
+	compareIntSlices(t, preOrder, dfo.Pre, "Preorder should match.")
+	compareIntSlices(t, postOrder, dfo.Post, "Postorder should match.")
+	compareIntSlices(t, revPosrOrder, dfo.ReversePost, "Reversed postorder should match.")
+}
+
+func compareIntSlices(t *testing.T, expected, actual []int, msg string) {
+	if len(expected) != len(actual) {
+		t.Errorf("%s Different length, expected %d but was %d",
+			msg, len(expected), len(actual))
+		return
+	}
+
+	for i := 0; i < len(expected); i++ {
+		if expected[i] != actual[i] {
+			t.Errorf("%s slice[%d] mismatch, expected %d but was %d."+
+				"\nExpected=%#v\nActual=%#v",
+				msg, i, expected[i], actual[i], expected, actual)
+			return
+		}
+	}
+}

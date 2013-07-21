@@ -69,11 +69,3 @@ func (t tremauxDFS) PathTo(to int) []int {
 
 	return path
 }
-
-func reverse(s []int) {
-	var opposite int
-	for i := 0; i < len(s)/2; i++ {
-		opposite = len(s) - 1 - i
-		s[i], s[opposite] = s[opposite], s[i]
-	}
-}

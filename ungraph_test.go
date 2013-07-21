@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	maxGraphSize = 1000
+	maxGraphSize = 100
 )
 
 func TestUngraphHasVertices(t *testing.T) {
