@@ -20,10 +20,10 @@ func NewWeightGraph(v int) WeightGraph {
 }
 
 // AddEdge adds weigthed edge e to this graph
-func (w *WeightGraph) AddEdge(e Edge) {
-	w.adj[e.from] = append(w.adj[e.from], e)
-	w.adj[e.to] = append(w.adj[e.to], e)
-	w.e++
+func (wg *WeightGraph) AddEdge(e Edge) {
+	wg.adj[e.from] = append(wg.adj[e.from], e)
+	wg.adj[e.to] = append(wg.adj[e.to], e)
+	wg.e++
 }
 
 // Adj gives the edges incident to v
@@ -80,16 +80,20 @@ type Edge struct {
 	to     int
 }
 
-// NewEdge constructs a new edge.
+// NewEdge creates a weigthed edge to be used by a WeightGraph
 func NewEdge(v, w int, weight float64) Edge {
 	return Edge{weight: weight, from: v, to: w}
 }
 
 // Less tells if this edge is less than the other edge
-func (e *Edge) Less(other Edge) bool { return e.weight < other.weight }
+func (e *Edge) Less(other Edge) bool {
+	return e.weight < other.weight
+}
 
 // Either returns either vertices of this edge.
-func (e *Edge) Either() int { return e.from }
+func (e *Edge) Either() int {
+	return e.from
+}
 
 // Other tells the other end of this edge, from v's perspective.
 func (e *Edge) Other(v int) int {
