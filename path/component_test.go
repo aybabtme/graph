@@ -100,7 +100,7 @@ var (
 	//        | 4|<--------/  |11|->|12|
 	//        +--+            +--+  +--+
 	//
-	graphEdges = []struct{ from, to int }{
+	dfoGraphEdges = []struct{ from, to int }{
 		// The order matters to match the expectations
 		{0, 5}, {0, 1},
 		{1, 6},
@@ -122,7 +122,7 @@ var (
 
 func TestDFOMatchesKnownOutput(t *testing.T) {
 	di := graph.NewDigraph(13)
-	for _, edge := range graphEdges {
+	for _, edge := range dfoGraphEdges {
 		di.AddEdge(edge.from, edge.to)
 	}
 
@@ -132,10 +132,10 @@ func TestDFOMatchesKnownOutput(t *testing.T) {
 	compareIntSlices(t, revPosrOrder, dfo.ReversePost, "Reversed postorder should match.")
 }
 
-func compareIntSlices(t *testing.T, expected, actual []int, msg string) {
+func compareIntSlices(t *testing.T, expected, actual []int, failMSg string) {
 	if len(expected) != len(actual) {
 		t.Errorf("%s Different length, expected %d but was %d",
-			msg, len(expected), len(actual))
+			failMSg, len(expected), len(actual))
 		return
 	}
 
@@ -143,8 +143,85 @@ func compareIntSlices(t *testing.T, expected, actual []int, msg string) {
 		if expected[i] != actual[i] {
 			t.Errorf("%s slice[%d] mismatch, expected %d but was %d."+
 				"\nExpected=%#v\nActual=%#v",
-				msg, i, expected[i], actual[i], expected, actual)
+				failMSg, i, expected[i], actual[i], expected, actual)
 			return
+		}
+	}
+}
+
+var (
+	// We use this crazy digraph, that's also a DAG, for our SCC testing
+	//
+	//                         +------------------------------------------------------+
+	//                         |           +------------------------------------------|
+	//                         +-----------|---------------------------+              |
+	//   +---------------------|----------+|                           |              |
+	//   |         +----------+|          ||               +--------------------------|
+	//   v         v          |v          |v               v           |              |
+	// +--+      +--+<-+--+  +--+  +--+  +--+      +--+  +--+  +--+  +--+      +--+<-+--+     +--+
+	// | 1|      | 2|  | 3|<-| 4|<-+ 5|<-| 0|      |10|<-| 9|<-+12|<-|11|      | 8|  | 6|<---+| 7|
+	// +--+      +--+->+--+  +--+  +--+  +--+      +--+  +--+  +--+  +--+      +--+->+--+     +--+
+	//             |     |          ^     ^          |    ^|    ^     ^                        |
+	//             |     +----------+     |          +----||----+     |                        |
+	//             +----------------------+               |+----------+                        |
+	//                                                    +------------------------------------+
+	// It's easy to see that is has 5 strongly connected components
+	sccGraphEdges = []struct{ from, to int }{
+		{0, 1}, {0, 5},
+		// 1 is not connected to anything
+		{2, 3}, {2, 0},
+		{3, 2}, {3, 5},
+		{4, 3}, {4, 2},
+		{5, 4},
+		{6, 8}, {6, 9}, {6, 0}, {6, 4},
+		{7, 6}, {7, 9},
+		{8, 6},
+		{9, 10}, {9, 11},
+		{10, 12},
+		{11, 12}, {11, 4},
+		{12, 9},
+	}
+	// We know the following are strongly connected components
+	sccExpected = []struct {
+		id   int
+		comp []int
+	}{
+		{id: 0, comp: []int{1}},
+		{id: 1, comp: []int{0, 2, 3, 4, 5}},
+		{id: 2, comp: []int{9, 10, 11, 12}},
+		{id: 3, comp: []int{6, 8}},
+		{id: 4, comp: []int{7}},
+	}
+)
+
+func TestSCCMatchesKnownOutput(t *testing.T) {
+	di := graph.NewDigraph(13)
+	for _, edge := range sccGraphEdges {
+		di.AddEdge(edge.from, edge.to)
+	}
+	scc := BuildSCC(di)
+
+	expectedCount := len(sccExpected)
+	actualCount := scc.Count()
+
+	if expectedCount != actualCount {
+		t.Fatalf("Didn't find the expected count, wanted %d got %d",
+			expectedCount, actualCount)
+	}
+
+	for i := 0; i < scc.Count(); i++ {
+		expectedID := sccExpected[i].id
+		for _, v := range sccExpected[i].comp {
+			actualID := scc.ID(v)
+			if expectedID != actualID {
+				t.Errorf("Wanted ID=%d but was %d", expectedID, actualID)
+			}
+			for _, w := range sccExpected[i].comp {
+				if !scc.StronglyConnected(v, w) {
+					t.Errorf("Vertices %d and %d should be strongly connected",
+						v, w)
+				}
+			}
 		}
 	}
 }

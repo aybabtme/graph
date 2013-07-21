@@ -101,7 +101,7 @@ func BuildSCC(di graph.Digraph) SCC {
 		}
 	}
 
-	dfo := BuildDFO(di)
+	dfo := BuildDFO(di.Reverse())
 	for _, v := range dfo.ReversePost {
 		if !marked[v] {
 			dfs(v)
