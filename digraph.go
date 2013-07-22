@@ -9,7 +9,7 @@ import (
 // Digraph is a directed graph implementation using an adjacency list
 type Digraph struct {
 	v   int
-	e   int
+	e   *int
 	adj [][]int
 }
 
@@ -17,34 +17,34 @@ type Digraph struct {
 func NewDigraph(v int) Digraph {
 	return Digraph{
 		v:   v,
-		e:   0,
+		e:   new(int),
 		adj: make([][]int, v),
 	}
 }
 
 // AddEdge adds an edge from v to w, but not from w to v. This is O(1).
-func (di *Digraph) AddEdge(v, w int) {
+func (di Digraph) AddEdge(v, w int) {
 	di.adj[v] = append(di.adj[v], w)
-	di.e++
+	(*di.e)++
 }
 
 // Adj is a slice of vertices adjacent to v. This is O(E)
-func (di *Digraph) Adj(v int) []int {
+func (di Digraph) Adj(v int) []int {
 	return di.adj[v]
 }
 
 // V is the number of vertices.
-func (di *Digraph) V() int {
+func (di Digraph) V() int {
 	return di.v
 }
 
 // E is the number of edges.
-func (di *Digraph) E() int {
-	return di.e
+func (di Digraph) E() int {
+	return *di.e
 }
 
 // Reverse returns the reverse of this digraph
-func (di *Digraph) Reverse() Digraph {
+func (di Digraph) Reverse() Digraph {
 	rev := NewDigraph(di.V())
 	for v := 0; v < di.V(); v++ {
 		for _, w := range di.Adj(v) {
@@ -55,7 +55,7 @@ func (di *Digraph) Reverse() Digraph {
 }
 
 // GoString represents this graph as a string.
-func (di *Digraph) GoString() string {
+func (di Digraph) GoString() string {
 	var output bytes.Buffer
 
 	do := func(n int, err error) {

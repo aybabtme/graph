@@ -17,26 +17,27 @@ func BuildKruskalMST(wg *graph.WeightGraph) MST {
 
 	var k kruskal
 
-	var pq *edgePQ
-	heap.Init(pq)
+	var pq edgePQ
+	heap.Init(&pq)
 	for _, e := range wg.Edges() {
-		heap.Push(pq, e)
+		w := e
+		heap.Push(&pq, &w)
 	}
 
 	uf := unionfind.BuildUF(wg.V())
 
 	for {
-		if pq.Len() == 0 || len(k.tree) < wg.V()-1 {
+		if pq.Len() == 0 || len(k.tree) > wg.V()-1 {
 			break
 		}
 
-		e := heap.Pop(pq).(graph.Edge)
+		e := heap.Pop(&pq).(*graph.Edge)
 		v := e.Either()
 		w := e.Other(v)
 
 		if !uf.Connected(v, w) {
 			uf.Union(v, w)
-			k.tree = append(k.tree, e)
+			k.tree = append(k.tree, *e)
 			k.weight += e.Weight()
 		}
 	}

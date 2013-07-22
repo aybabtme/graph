@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-type pfFact func(graph.Graph, int) (PathFinder, error)
+type pfFact func(graph.Graph, int) PathFinder
 
 var pathFinders = []pfFact{
 	BuildDFS,
@@ -42,10 +42,7 @@ func simpleGraphHarness(t *testing.T, pfFactory pfFact) {
 	g.AddEdge(11, 12)
 
 	for _, v := range expectPathTo {
-		pf, err := pfFactory(g, v)
-		if err != nil {
-			t.Fatalf("Couldn't build PathFinder, %v", err)
-		}
+		pf := pfFactory(g, v)
 
 		for _, conn := range expectPathTo {
 			if !pf.HasPathTo(conn) {
@@ -89,54 +86,5 @@ func simpleGraphHarness(t *testing.T, pfFactory pfFact) {
 					v, disconn, g)
 			}
 		}
-	}
-}
-
-var shouldHaveErr = []struct {
-	size   int
-	source int
-	msg    string
-}{
-	{0, -10, "Empty graph with negative index (-10)"},
-	{0, -1, "Empty graph with negative index (-1)"},
-	{0, 0, "Empty graph with index of 0"},
-	{0, 1, "Empty graph with index too big (1)"},
-	{0, 10, "Empty graph with index too big (10)"},
-	{1, 1, "Graph size 1 with index too big (1)"},
-	{1, 2, "Graph size 1 with index too big (2)"},
-	{1, 10, "Graph size 1 with index too big (10)"},
-	{1, -1, "Graph size 1 with negative index (-1)"},
-	{1, -2, "Graph size 1 with negative index (-2)"},
-	{1, -10, "Graph size 1 with negative index (-10)"},
-	{10, 10, "Graph size 10 with index too big (10)"},
-	{10, 11, "Graph size 10 with index too big (11)"},
-	{10, 100, "Graph size 10 with index too big (100)"},
-	{10, -1, "Graph size 10 with negative index (-1)"},
-	{10, -2, "Graph size 10 with negative index (-2)"},
-	{10, -10, "Graph size 10 with negative index (-10)"},
-}
-
-func TestSearchPanicBadArgsForSource(t *testing.T) {
-	for _, pf := range pathFinders {
-		for _, tt := range shouldHaveErr {
-			badArgsHarness(t, pf, tt.size, tt.source, tt.msg)
-		}
-	}
-}
-
-func badArgsHarness(
-	t *testing.T,
-	pf pfFact,
-	size, source int,
-	msg string,
-) {
-	defer func() {
-		if r := recover(); r != nil {
-			t.Errorf("Test \"%s\" panicked with message, %v", msg, r)
-		}
-	}()
-
-	if _, err := pf(graph.NewGraph(size), source); err == nil {
-		t.Errorf("%s, should have error", msg)
 	}
 }

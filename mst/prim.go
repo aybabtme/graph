@@ -14,8 +14,9 @@ type lazyPrim struct {
 // This is O(E log E) and extra space proportional to E.
 func BuildLazyPrimMST(wg *graph.WeightGraph) MST {
 	var p lazyPrim
-	var pq *edgePQ
-	heap.Init(pq)
+	var pq edgePQ
+	heap.Init(&pq)
+
 	marked := make([]bool, wg.V())
 
 	var visit func(int)
@@ -23,17 +24,19 @@ func BuildLazyPrimMST(wg *graph.WeightGraph) MST {
 		marked[v] = true
 		for _, adj := range wg.Adj(v) {
 			if !marked[adj.Other(v)] {
-				heap.Push(pq, adj)
+				w := adj
+				heap.Push(&pq, &w)
 			}
 		}
 	}
 
+	visit(0)
 	for {
 		if pq.Len() == 0 {
 			return p
 		}
 
-		e := heap.Pop(pq).(graph.Edge)
+		e := heap.Pop(&pq).(*graph.Edge)
 		v := e.Either()
 		w := e.Other(v)
 
@@ -41,7 +44,8 @@ func BuildLazyPrimMST(wg *graph.WeightGraph) MST {
 			continue
 		}
 
-		p.tree = append(p.tree, e)
+		p.tree = append(p.tree, *e)
+		p.weight += e.Weight()
 
 		if !marked[v] {
 			visit(v)

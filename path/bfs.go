@@ -2,7 +2,6 @@ package path
 
 import (
 	"container/list"
-	"errors"
 	"github.com/aybabtme/graph"
 )
 
@@ -15,19 +14,9 @@ type bfs struct {
 
 // BuildBFS builds a Breath First Search PathFinder for graph g starting from
 // source s
-func BuildBFS(g graph.Graph, s int) (PathFinder, error) {
+func BuildBFS(g graph.Graph, s int) PathFinder {
 
-	var b bfs
-
-	if s < 0 {
-		return b, errors.New("Can't start BFS from negative source")
-	}
-
-	if s >= g.V() {
-		return b, errors.New("Can't start BFS from vertex v >= total vertex count")
-	}
-
-	b = bfs{
+	b := bfs{
 		g:      g,
 		from:   s,
 		edgeTo: make([]int, g.V()),
@@ -53,7 +42,7 @@ func BuildBFS(g graph.Graph, s int) (PathFinder, error) {
 		}
 	}
 
-	return b, nil
+	return b
 }
 
 func (b bfs) HasPathTo(to int) bool {
