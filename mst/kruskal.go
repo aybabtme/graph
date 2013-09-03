@@ -12,7 +12,7 @@ type kruskal struct {
 }
 
 // BuildKruskalMST builds the MST for a weighted graph wg.
-// This is O(E log E). If edges arrive sorted, E log V
+// This is O(E log E). If edges arrive sorted, E log V.
 func BuildKruskalMST(wg *graph.WeightGraph) MST {
 
 	var k kruskal

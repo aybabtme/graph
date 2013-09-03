@@ -2,6 +2,7 @@ package graph
 
 import (
 	"math"
+	"os"
 	"testing"
 )
 
@@ -97,5 +98,84 @@ func TestEdgeCanCompare(t *testing.T) {
 	if medium.Less(small) {
 		t.Errorf("'%#v' should be greater than '%#v' but was not ",
 			medium, small)
+	}
+}
+
+func TestWeightGraphFromFile(t *testing.T) {
+	filename := "data/tinyEWG.txt"
+	if testing.Short() {
+		t.Skip("Not running test using " + filename)
+	}
+	fd, err := os.Open(filename)
+	if err != nil {
+		t.Fatalf("Failed opening %s, %v", filename, err)
+	}
+
+	g, err := ReadWeightGraph(fd)
+	if err != nil {
+		t.Fatalf("Couldn't read graph from %s, %v", filename, err)
+	}
+
+	wantV := 8
+	gotV := g.V()
+
+	if gotV != wantV {
+		t.Errorf("Vertex count, want %d got %d", wantV, gotV)
+	}
+
+	wantE := 16
+	gotE := g.E()
+	if gotE != wantE {
+		t.Errorf("Edge count, want %d got %d", wantE, gotE)
+	}
+
+	for _, v := range g.Adj(4) {
+		switch v.to {
+		case 5:
+			continue
+		case 7:
+			continue
+		case 0:
+			continue
+		case 6:
+			continue
+		}
+		switch v.from {
+		case 5:
+			continue
+		case 7:
+			continue
+		case 0:
+			continue
+		case 6:
+			continue
+		}
+
+		t.Errorf("%d should not be adjacent to %d", v.from, v.to)
+	}
+
+	for _, v := range g.Adj(1) {
+		switch v.to {
+		case 5:
+			continue
+		case 7:
+			continue
+		case 2:
+			continue
+		case 3:
+			continue
+		}
+		switch v.from {
+		case 5:
+			continue
+		case 7:
+			continue
+		case 2:
+			continue
+		case 3:
+			continue
+
+		}
+		t.Errorf("%d should not be adjacent to %d", v.from, v.to)
 	}
 }

@@ -48,7 +48,7 @@ func (e *edgePQ) Pop() interface{} {
 	old := *e
 	n := len(old)
 	item := old[n-1]
-	item.index = -1 // for safety
+	item.index = -1 // for safety, voodoo programming ftw!
 	*e = old[0 : n-1]
 	return item.edge
 }

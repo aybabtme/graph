@@ -3,6 +3,7 @@ package graph
 import (
 	"bytes"
 	"fmt"
+	"io"
 )
 
 // WeightGraph is a graph with weighted edges.
@@ -17,6 +18,60 @@ func NewWeightGraph(v int) WeightGraph {
 		adj: make([][]Edge, v),
 		e:   0,
 	}
+}
+
+// ReadWeightGraph constructs an undirected graph from the io.Reader expecting
+// to find data formed such as:
+//   v
+//   e
+//   a b w0
+//   c d w1
+//   ...
+//   y z wN
+// where `v` is the vertex count, `e` the number of edges and `a`, `b`, `c`,
+// `d`, ..., `y` and `z` are edges between `a` and `b`, `c` and `d`, ..., and
+// `y` and `z` respectively, and `wN` is the weight of that edge.
+func ReadWeightGraph(input io.Reader) (WeightGraph, error) {
+
+	var v int
+	n, err := fmt.Fscanf(input, "%d\n", &v)
+	if err != nil {
+		return WeightGraph{}, fmt.Errorf("Failed reading vertex count, %v", err)
+	} else if n != 1 {
+		return WeightGraph{}, fmt.Errorf("Wanted to read %d integer from vertex count, read %d", 1, n)
+	}
+
+	g := NewWeightGraph(v)
+
+	var e int
+	n, err = fmt.Fscanf(input, "%d\n", &e)
+	if err != nil {
+		return WeightGraph{}, fmt.Errorf("Failed reading edge count, %v", err)
+	} else if n != 1 {
+		return WeightGraph{}, fmt.Errorf("Wanted to read %d integer from edge count, read %d", 1, n)
+	}
+
+	readEdgePair := func(num int) (int, int, float64, error) {
+		var from, to int
+		var weight float64
+		n, err := fmt.Fscanf(input, "%d %d %f\n", &from, &to, &weight)
+		if err != nil {
+			return -1, -1, -1.0, fmt.Errorf("Failed reading edge line #%d, %v", num, err)
+		} else if n != 3 {
+			return -1, -1, -1.0, fmt.Errorf("Wanted to read %d numbers from edge line, read %d", 3, n)
+		}
+		return from, to, weight, nil
+	}
+
+	for i := 0; i < e; i++ {
+		from, to, weight, err := readEdgePair(i)
+		if err != nil {
+			return g, err
+		}
+		g.AddEdge(NewEdge(from, to, weight))
+	}
+
+	return g, nil
 }
 
 // AddEdge adds weigthed edge e to this graph

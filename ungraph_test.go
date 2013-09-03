@@ -2,6 +2,7 @@ package graph
 
 import (
 	"math/rand"
+	"os"
 	"testing"
 	"time"
 )
@@ -84,6 +85,58 @@ func TestUngraphCanAddEdges(t *testing.T) {
 
 		if adj[0] != to {
 			t.Fatalf("Vertex %d should have an edge with %d", from, to)
+		}
+	}
+}
+
+func TestUngraphFromFile(t *testing.T) {
+	filename := "data/tinyG.txt"
+	if testing.Short() {
+		t.Skip("Not running test using " + filename)
+	}
+	fd, err := os.Open(filename)
+	if err != nil {
+		t.Fatalf("Failed opening %s, %v", filename, err)
+	}
+
+	g, err := ReadGraph(fd)
+	if err != nil {
+		t.Fatalf("Couldn't read graph from %s, %v", filename, err)
+	}
+
+	if g.V() != 13 {
+		t.Errorf("Vertex count, want %d got %d", 13, g.V())
+	}
+
+	if g.E() != 13 {
+		t.Errorf("Edge count, want %d got %d", 13, g.E())
+	}
+
+	for _, v := range g.Adj(9) {
+		switch v {
+		case 10:
+			continue
+		case 11:
+			continue
+		case 12:
+			continue
+		default:
+			t.Errorf("9 should not be adjacent to %d", v)
+		}
+	}
+
+	for _, v := range g.Adj(0) {
+		switch v {
+		case 5:
+			continue
+		case 1:
+			continue
+		case 2:
+			continue
+		case 6:
+			continue
+		default:
+			t.Errorf("0 should not be adjacent to %d", v)
 		}
 	}
 }
