@@ -110,6 +110,7 @@ func TestWeightGraphFromFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed opening %s, %v", filename, err)
 	}
+	defer fd.Close()
 
 	g, err := ReadWeightGraph(fd)
 	if err != nil {

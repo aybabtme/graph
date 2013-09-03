@@ -98,6 +98,7 @@ func TestUngraphFromFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed opening %s, %v", filename, err)
 	}
+	defer fd.Close()
 
 	g, err := ReadGraph(fd)
 	if err != nil {

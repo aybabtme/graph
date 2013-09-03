@@ -32,43 +32,27 @@ func NewWeightGraph(v int) WeightGraph {
 // `d`, ..., `y` and `z` are edges between `a` and `b`, `c` and `d`, ..., and
 // `y` and `z` respectively, and `wN` is the weight of that edge.
 func ReadWeightGraph(input io.Reader) (WeightGraph, error) {
+	scan := newWeighGraphScanner(input)
 
-	var v int
-	n, err := fmt.Fscanf(input, "%d\n", &v)
+	v, err := scan.NextInt()
 	if err != nil {
-		return WeightGraph{}, fmt.Errorf("Failed reading vertex count, %v", err)
-	} else if n != 1 {
-		return WeightGraph{}, fmt.Errorf("Wanted to read %d integer from vertex count, read %d", 1, n)
+		return WeightGraph{}, fmt.Errorf("Failed reading vertex count. %v", err)
 	}
 
 	g := NewWeightGraph(v)
 
-	var e int
-	n, err = fmt.Fscanf(input, "%d\n", &e)
+	e, err := scan.NextInt()
 	if err != nil {
-		return WeightGraph{}, fmt.Errorf("Failed reading edge count, %v", err)
-	} else if n != 1 {
-		return WeightGraph{}, fmt.Errorf("Wanted to read %d integer from edge count, read %d", 1, n)
-	}
-
-	readEdgePair := func(num int) (int, int, float64, error) {
-		var from, to int
-		var weight float64
-		n, err := fmt.Fscanf(input, "%d %d %f\n", &from, &to, &weight)
-		if err != nil {
-			return -1, -1, -1.0, fmt.Errorf("Failed reading edge line #%d, %v", num, err)
-		} else if n != 3 {
-			return -1, -1, -1.0, fmt.Errorf("Wanted to read %d numbers from edge line, read %d", 3, n)
-		}
-		return from, to, weight, nil
+		return WeightGraph{}, fmt.Errorf("Failed reading edge count. %v", err)
 	}
 
 	for i := 0; i < e; i++ {
-		from, to, weight, err := readEdgePair(i)
+		from, to, weight, err := scan.NextEdge()
 		if err != nil {
-			return g, err
+			return g, fmt.Errorf("Failed at edge line=%d. %v", i, err)
 		}
 		g.AddEdge(NewEdge(from, to, weight))
+
 	}
 
 	return g, nil
