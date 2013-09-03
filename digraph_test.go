@@ -1,6 +1,7 @@
 package graph
 
 import (
+	"os"
 	"sort"
 	"testing"
 )
@@ -184,5 +185,55 @@ func TestDigraphHasCycle(t *testing.T) {
 		if expectedCycle[i] != cycle[i] {
 			t.Fatalf("Expected %v but was %v", expectedCycle, cycle)
 		}
+	}
+}
+
+func TestDigraphFromFile(t *testing.T) {
+	filename := "data/tinyDG.txt"
+	if testing.Short() {
+		t.Skip("Not running test using " + filename)
+	}
+	fd, err := os.Open(filename)
+	if err != nil {
+		t.Fatalf("Failed opening %s, %v", filename, err)
+	}
+
+	g, err := ReadDigraph(fd)
+	if err != nil {
+		t.Fatalf("Couldn't read graph from %s, %v", filename, err)
+	}
+
+	wantV := 13
+	gotV := g.V()
+
+	if wantV != gotV {
+		t.Errorf("Vertex count, want %d got %d", wantV, gotV)
+	}
+
+	wantE := 22
+	gotE := g.E()
+
+	if wantE != gotE {
+		t.Errorf("Edge count, want %d got %d", wantE, gotE)
+	}
+
+	for _, v := range g.Adj(6) {
+		switch v {
+		case 0:
+			continue
+		case 4:
+			continue
+		case 8:
+			continue
+		case 9:
+			continue
+		default:
+			t.Errorf("6 should not be adjacent to %d", v)
+		}
+	}
+
+	// v=1 has no out-edges
+	for _, v := range g.Adj(1) {
+		t.Errorf("1 should not be adjacent to %d", v)
 	}
 }
