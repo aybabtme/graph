@@ -36,38 +36,21 @@ func NewDigraph(v int) Digraph {
 // `d`, ..., `y` and `z` are edges between `a` and `b`, `c` and `d`, ..., and
 // `y` and `z` respectively.
 func ReadDigraph(input io.Reader) (Digraph, error) {
-
-	var v int
-	n, err := fmt.Fscanf(input, "%d\n", &v)
+	scan := newGraphScanner(input)
+	v, err := scan.NextInt()
 	if err != nil {
-		return Digraph{}, fmt.Errorf("Failed reading vertex count, %v", err)
-	} else if n != 1 {
-		return Digraph{}, fmt.Errorf("Wanted to read %d integer from vertex count, read %d", 1, n)
+		return Digraph{}, fmt.Errorf("Failed reading vertex count. %v", err)
 	}
 
 	g := NewDigraph(v)
 
-	var e int
-	n, err = fmt.Fscanf(input, "%d\n", &e)
+	e, err := scan.NextInt()
 	if err != nil {
-		return Digraph{}, fmt.Errorf("Failed reading edge count, %v", err)
-	} else if n != 1 {
-		return Digraph{}, fmt.Errorf("Wanted to read %d integer from edge count, read %d", 1, n)
-	}
-
-	readEdgePair := func(num int) (int, int, error) {
-		var from, to int
-		n, err := fmt.Fscanf(input, "%d %d\n", &from, &to)
-		if err != nil {
-			return -1, -1, fmt.Errorf("Failed reading edge line #%d, %v", num, err)
-		} else if n != 2 {
-			return -1, -1, fmt.Errorf("Wanted to read %d integers from edge line, read %d", 2, n)
-		}
-		return from, to, nil
+		return g, fmt.Errorf("Failed reading edge count. %v", err)
 	}
 
 	for i := 0; i < e; i++ {
-		from, to, err := readEdgePair(i)
+		from, to, err := scan.NextEdge()
 		if err != nil {
 			return g, err
 		}
