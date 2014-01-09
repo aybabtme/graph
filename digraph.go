@@ -39,14 +39,14 @@ func ReadDigraph(input io.Reader) (Digraph, error) {
 	scan := newGraphScanner(input)
 	v, err := scan.NextInt()
 	if err != nil {
-		return Digraph{}, fmt.Errorf("Failed reading vertex count. %v", err)
+		return Digraph{}, fmt.Errorf("failed reading vertex count, %v", err)
 	}
 
 	g := NewDigraph(v)
 
 	e, err := scan.NextInt()
 	if err != nil {
-		return g, fmt.Errorf("Failed reading edge count. %v", err)
+		return g, fmt.Errorf("failed reading edge count, %v", err)
 	}
 
 	for i := 0; i < e; i++ {
@@ -125,7 +125,7 @@ func NewDAG(d Digraph) (DAG, error) {
 	if len(DirectedCycle(d)) == 0 {
 		return DAG{&d}, nil
 	}
-	return DAG{}, errors.New("Digraph has at least one cycle")
+	return DAG{}, errors.New("digraph has at least one cycle")
 
 }
 

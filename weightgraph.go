@@ -36,20 +36,20 @@ func ReadWeightGraph(input io.Reader) (WeightGraph, error) {
 
 	v, err := scan.NextInt()
 	if err != nil {
-		return WeightGraph{}, fmt.Errorf("Failed reading vertex count. %v", err)
+		return WeightGraph{}, fmt.Errorf("failed reading vertex count, %v", err)
 	}
 
 	g := NewWeightGraph(v)
 
 	e, err := scan.NextInt()
 	if err != nil {
-		return WeightGraph{}, fmt.Errorf("Failed reading edge count. %v", err)
+		return WeightGraph{}, fmt.Errorf("failed reading edge count, %v", err)
 	}
 
 	for i := 0; i < e; i++ {
 		from, to, weight, err := scan.NextEdge()
 		if err != nil {
-			return g, fmt.Errorf("Failed at edge line=%d. %v", i, err)
+			return g, fmt.Errorf("failed at edge line=%d, %v", i, err)
 		}
 		g.AddEdge(NewEdge(from, to, weight))
 
@@ -66,15 +66,15 @@ func (wg *WeightGraph) AddEdge(e Edge) {
 }
 
 // Adj gives the edges incident to v
-func (w *WeightGraph) Adj(v int) []Edge {
-	return w.adj[v]
+func (wg *WeightGraph) Adj(v int) []Edge {
+	return wg.adj[v]
 }
 
 // Edges gives all the edges in this graph
-func (w *WeightGraph) Edges() []Edge {
+func (wg *WeightGraph) Edges() []Edge {
 	var edges []Edge
-	for v := 0; v < w.V(); v++ {
-		for _, adj := range w.Adj(v) {
+	for v := 0; v < wg.V(); v++ {
+		for _, adj := range wg.Adj(v) {
 			if adj.Other(v) > v {
 				edges = append(edges, adj)
 			}
@@ -84,17 +84,17 @@ func (w *WeightGraph) Edges() []Edge {
 }
 
 // V is the number of vertives
-func (w *WeightGraph) V() int {
-	return len(w.adj)
+func (wg *WeightGraph) V() int {
+	return len(wg.adj)
 }
 
 // E is the number of edges
-func (w *WeightGraph) E() int {
-	return w.e
+func (wg *WeightGraph) E() int {
+	return wg.e
 }
 
 // GoString represents this weighted graph
-func (w *WeightGraph) GoString() string {
+func (wg *WeightGraph) GoString() string {
 	var output bytes.Buffer
 
 	do := func(n int, err error) {
@@ -103,8 +103,8 @@ func (w *WeightGraph) GoString() string {
 		}
 	}
 
-	for v := 0; v < w.V(); v++ {
-		for _, w := range w.Adj(v) {
+	for v := 0; v < wg.V(); v++ {
+		for _, w := range wg.Adj(v) {
 			do(output.WriteString(w.GoString()))
 			do(output.WriteRune('\n'))
 		}

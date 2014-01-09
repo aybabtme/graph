@@ -67,20 +67,20 @@ func ReadGraph(input io.Reader) (Ungraph, error) {
 
 	v, err := scan.NextInt()
 	if err != nil {
-		return Ungraph{}, fmt.Errorf("Failed reading vertex count. %v", err)
+		return Ungraph{}, fmt.Errorf("failed reading vertex count, %v", err)
 	}
 
 	g := NewGraph(v)
 
 	e, err := scan.NextInt()
 	if err != nil {
-		return Ungraph{}, fmt.Errorf("Failed reading edge count. %v", err)
+		return Ungraph{}, fmt.Errorf("failed reading edge count, %v", err)
 	}
 
 	for i := 0; i < e; i++ {
 		from, to, err := scan.NextEdge()
 		if err != nil {
-			return g, fmt.Errorf("Failed at edge line=%d. %v", i, err)
+			return g, fmt.Errorf("failed at edge line=%d, %v", i, err)
 		}
 		g.AddEdge(from, to)
 	}

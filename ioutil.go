@@ -25,7 +25,7 @@ func (w *graphScanner) NextInt() (int, error) {
 
 		return strconv.Atoi(w.Text())
 	}
-	return 0, fmt.Errorf("Couldn't scan")
+	return 0, fmt.Errorf("couldn't scan")
 }
 
 func (w *graphScanner) NextEdge() (from int, to int, err error) {
@@ -58,7 +58,7 @@ func (w *weightGraphScanner) NextInt() (int, error) {
 
 		return strconv.Atoi(w.Text())
 	}
-	return 0, fmt.Errorf("Couldn't scan")
+	return 0, fmt.Errorf("couldn't scan")
 }
 
 func (w *weightGraphScanner) NextFloat() (float64, error) {
@@ -69,7 +69,7 @@ func (w *weightGraphScanner) NextFloat() (float64, error) {
 
 		return strconv.ParseFloat(w.Text(), 64)
 	}
-	return 0, fmt.Errorf("Couldn't scan")
+	return 0, fmt.Errorf("couldn't scan")
 }
 
 func (w *weightGraphScanner) NextEdge() (from int, to int, weight float64, err error) {

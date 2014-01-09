@@ -87,7 +87,8 @@ func HasCycle(g Graph) bool {
 	return hasCycle
 }
 
-// IsBipartite returns if every vertex in graph g can be colored with only two // colors, while never sharing the same color an adjacent vertex
+// IsBipartite returns if every vertex in graph g can be colored with only two
+// colors, while never sharing the same color of an adjacent vertex
 func IsBipartite(g Graph) bool {
 	marked := make([]bool, g.V())
 	color := make([]bool, g.V())
