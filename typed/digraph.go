@@ -81,7 +81,8 @@ func (di *Digraph) E() int {
 // Reverse returns the reverse of this digraph
 func (di *Digraph) Reverse() *Digraph {
 	rev := NewDigraph(di.V())
-	for v := 0; v < di.V(); v++ {
+	for vID := 0; vID < di.V(); vID++ {
+		v := di.invIdx[vID]
 		for _, w := range di.Adj(v) {
 			rev.AddEdge(w, v)
 		}
