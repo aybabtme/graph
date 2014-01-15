@@ -68,12 +68,12 @@ func (un *Ungraph) ID(v interface{}) int {
 
 // V is the number of vertices. This is O(1).
 func (un *Ungraph) V() int {
-	return un.V()
+	return un.g.V()
 }
 
 // E is the number of edges. This is O(1).
 func (un *Ungraph) E() int {
-	return un.E()
+	return un.g.E()
 }
 
 // GoString represents this graph as a string.

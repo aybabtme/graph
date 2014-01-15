@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+
 	"github.com/aybabtme/graph"
 )
 
@@ -109,92 +110,41 @@ func (di *Digraph) GoString() string {
 // digraph.
 type DAG struct {
 	*Digraph
+	g graph.DAG
 }
 
 // NewDAG returns a DAG built from digraph d, if d has no cycle. Otherwise
 // it returns an error.
-func NewDAG(di *Digraph) (DAG, error) {
-	if len(DirectedCycle(di)) == 0 {
-		return DAG{di}, nil
+func NewDAG(di *Digraph) (*DAG, error) {
+	dag, err := graph.NewDAG(di.g)
+	if err != nil {
+		return nil, err
 	}
-	return DAG{}, errors.New("digraph has at least one cycle")
+	return &DAG{di, dag}, errors.New("digraph has at least one cycle")
 
 }
 
 // Sort gives the topological sort of this DAG.
 func (d *DAG) Sort() []interface{} {
-	// Why aren't we using the path.BuildDFO(di) function?
-	// - It would result in an import cycle, that is why.
+	vertices := d.g.Sort()
 
-	marked := make([]bool, d.V())
-
-	var revPostOrder []interface{}
-
-	var visit func(interface{})
-
-	visit = func(v interface{}) {
-		vID := d.index[v]
-		marked[vID] = true
-		for _, adj := range d.Adj(v) {
-			adjID := d.index[adj]
-			if !marked[adjID] {
-				visit(adj)
-			}
-		}
-		revPostOrder = append(revPostOrder, v)
+	values := make([]interface{}, len(vertices))
+	for i, val := range vertices {
+		values[i] = d.invIdx[val]
 	}
-
-	for v := 0; v < d.V(); v++ {
-		if !marked[v] {
-			visit(v)
-		}
-	}
-
-	return reverse(revPostOrder)
+	return values
 }
 
 // DirectedCycle returns a cycle in digraph di, if there is one.
 func DirectedCycle(di *Digraph) []interface{} {
 
-	marked := make([]bool, di.V())
-	edgeTo := make([]interface{}, di.V())
-	onStack := make([]bool, di.V())
-	var cycle []interface{}
-	hasCycle := func() bool {
-		return len(cycle) != 0
+	cycle := graph.DirectedCycle(di.g)
+
+	values := make([]interface{}, len(cycle))
+	for i, val := range cycle {
+		values[i] = di.invIdx[val]
 	}
-
-	var dfs func(v interface{})
-
-	dfs = func(v interface{}) {
-		vID := di.index[v]
-		onStack[vID] = true
-		marked[vID] = true
-		for _, w := range di.Adj(v) {
-			wID := di.index[w]
-			if hasCycle() {
-				return
-			} else if !marked[wID] {
-				edgeTo[wID] = v
-				dfs(w)
-			} else if onStack[wID] {
-				for x := v; x != w; x = edgeTo[di.index[x]] {
-					cycle = append(cycle, x)
-				}
-				cycle = append(cycle, w)
-				cycle = append(cycle, v)
-			}
-		}
-		onStack[vID] = false
-	}
-
-	for v := 0; v < di.V(); v++ {
-		if !marked[v] {
-			dfs(v)
-		}
-	}
-
-	return reverse(cycle)
+	return reverse(values)
 }
 
 func reverse(s []interface{}) []interface{} {
