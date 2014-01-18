@@ -12,7 +12,7 @@ type TransitiveClosure struct {
 
 // BuildTransitiveClosure builds a model of all-pair reachable vertices using
 // depth-first search path finders.
-func BuildTransitiveClosure(di graph.Digraph) *TransitiveClosure {
+func BuildTransitiveClosure(di *graph.Digraph) *TransitiveClosure {
 	tc := &TransitiveClosure{paths: make([]PathFinder, di.V())}
 
 	for v := 0; v < di.V(); v++ {

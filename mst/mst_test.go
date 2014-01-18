@@ -60,7 +60,7 @@ func testMstAgainstKnownOutput(t *testing.T, mstFunc func(*WeightGraph) MST, exp
 		wg.AddEdge(edge)
 	}
 
-	mst := mstFunc(&wg)
+	mst := mstFunc(wg)
 
 	actualWeight := mst.Weight()
 

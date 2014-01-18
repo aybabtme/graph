@@ -81,7 +81,7 @@ type strongComp struct {
 
 // BuildSCC builds a Strongly Connected Component representation of digraph di
 // using the Kosaraju Sharir algorithm.
-func BuildSCC(di graph.Digraph) SCC {
+func BuildSCC(di *graph.Digraph) SCC {
 	scc := strongComp{
 		id:    make([]int, di.V()),
 		count: 0,
@@ -137,7 +137,7 @@ type DFO struct {
 
 // BuildDFO constructs a depth first order representation of
 // digraph di.
-func BuildDFO(di graph.Digraph) *DFO {
+func BuildDFO(di *graph.Digraph) *DFO {
 	dfo := &DFO{}
 	marked := make([]bool, di.V())
 

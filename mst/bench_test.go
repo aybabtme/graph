@@ -55,7 +55,7 @@ func readGraph(filename string) *graph.WeightGraph {
 	if err != nil {
 		panic(err)
 	}
-	return &g
+	return g
 }
 
 func Benchmark_Kruskal_TinyEWG(b *testing.B)   { benchmarkGraph(BuildKruskalMST, tiny, b) }

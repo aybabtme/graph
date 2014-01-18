@@ -6,6 +6,9 @@ import (
 	"testing"
 )
 
+// Assert that NewDigraph returns an implementation of Graph
+var _ Graph = NewDigraph(0)
+
 func TestDigraphHasVertices(t *testing.T) {
 	expected := 3
 
@@ -67,7 +70,7 @@ func TestDigraphAddEdgeThenHasAdjacent(t *testing.T) {
 //  +--+         +--+
 var expectedOrder = []int{0, 1, 3, 2}
 
-func digraphWithoutCycle() Digraph {
+func digraphWithoutCycle() *Digraph {
 	di := NewDigraph(4)
 
 	di.AddEdge(0, 1)
@@ -91,7 +94,7 @@ func digraphWithoutCycle() Digraph {
 //  +--+         +--+
 var expectedCycle = []int{2, 0, 1, 3, 2}
 
-func digraphWithCycle() Digraph {
+func digraphWithCycle() *Digraph {
 	di := NewDigraph(4)
 
 	di.AddEdge(0, 1)
@@ -104,7 +107,7 @@ func digraphWithCycle() Digraph {
 }
 
 func TestDigraphCanStringify(t *testing.T) {
-	for _, f := range []func() Digraph{
+	for _, f := range []func() *Digraph{
 		digraphWithoutCycle,
 		digraphWithCycle,
 	} {

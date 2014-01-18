@@ -13,8 +13,8 @@ type WeightGraph struct {
 }
 
 // NewWeightGraph creates an empty graph with v vertices
-func NewWeightGraph(v int) WeightGraph {
-	return WeightGraph{
+func NewWeightGraph(v int) *WeightGraph {
+	return &WeightGraph{
 		adj: make([][]Edge, v),
 		e:   0,
 	}
@@ -31,19 +31,19 @@ func NewWeightGraph(v int) WeightGraph {
 // where `v` is the vertex count, `e` the number of edges and `a`, `b`, `c`,
 // `d`, ..., `y` and `z` are edges between `a` and `b`, `c` and `d`, ..., and
 // `y` and `z` respectively, and `wN` is the weight of that edge.
-func ReadWeightGraph(input io.Reader) (WeightGraph, error) {
+func ReadWeightGraph(input io.Reader) (*WeightGraph, error) {
 	scan := newWeighGraphScanner(input)
 
 	v, err := scan.NextInt()
 	if err != nil {
-		return WeightGraph{}, fmt.Errorf("failed reading vertex count, %v", err)
+		return &WeightGraph{}, fmt.Errorf("failed reading vertex count, %v", err)
 	}
 
 	g := NewWeightGraph(v)
 
 	e, err := scan.NextInt()
 	if err != nil {
-		return WeightGraph{}, fmt.Errorf("failed reading edge count, %v", err)
+		return &WeightGraph{}, fmt.Errorf("failed reading edge count, %v", err)
 	}
 
 	for i := 0; i < e; i++ {

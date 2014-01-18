@@ -13,7 +13,7 @@ type Digraph struct {
 	cur    int
 	index  map[interface{}]int
 	invIdx []interface{}
-	g      graph.Digraph
+	g      *graph.Digraph
 }
 
 // NewDigraph returns a digraph with v vertices, all disconnected
@@ -111,7 +111,7 @@ func (di *Digraph) GoString() string {
 // digraph.
 type DAG struct {
 	*Digraph
-	g graph.DAG
+	g *graph.DAG
 }
 
 // NewDAG returns a DAG built from digraph d, if d has no cycle. Otherwise

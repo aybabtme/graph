@@ -10,7 +10,7 @@ type WeightGraph struct {
 	cur    int
 	index  map[interface{}]int
 	invIdx []interface{}
-	g      graph.WeightGraph
+	g      *graph.WeightGraph
 }
 
 // NewWeightGraph creates an empty graph with v vertices

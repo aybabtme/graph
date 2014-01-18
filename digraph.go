@@ -11,15 +11,15 @@ import (
 // Digraph is a directed graph implementation using an adjacency list
 type Digraph struct {
 	v   int
-	e   *int
+	e   int
 	adj [][]int
 }
 
 // NewDigraph returns a digraph with v vertices, all disconnected
-func NewDigraph(v int) Digraph {
-	return Digraph{
+func NewDigraph(v int) *Digraph {
+	return &Digraph{
 		v:   v,
-		e:   new(int),
+		e:   0,
 		adj: make([][]int, v),
 	}
 }
@@ -35,11 +35,11 @@ func NewDigraph(v int) Digraph {
 // where `v` is the vertex count, `e` the number of edges and `a`, `b`, `c`,
 // `d`, ..., `y` and `z` are edges between `a` and `b`, `c` and `d`, ..., and
 // `y` and `z` respectively.
-func ReadDigraph(input io.Reader) (Digraph, error) {
+func ReadDigraph(input io.Reader) (*Digraph, error) {
 	scan := newGraphScanner(input)
 	v, err := scan.NextInt()
 	if err != nil {
-		return Digraph{}, fmt.Errorf("failed reading vertex count, %v", err)
+		return &Digraph{}, fmt.Errorf("failed reading vertex count, %v", err)
 	}
 
 	g := NewDigraph(v)
@@ -61,28 +61,28 @@ func ReadDigraph(input io.Reader) (Digraph, error) {
 }
 
 // AddEdge adds an edge from v to w, but not from w to v. This is O(1).
-func (di Digraph) AddEdge(v, w int) {
+func (di *Digraph) AddEdge(v, w int) {
 	di.adj[v] = append(di.adj[v], w)
-	(*di.e)++
+	di.e++
 }
 
 // Adj is a slice of vertices adjacent to v. This is O(E)
-func (di Digraph) Adj(v int) []int {
+func (di *Digraph) Adj(v int) []int {
 	return di.adj[v]
 }
 
 // V is the number of vertices.
-func (di Digraph) V() int {
+func (di *Digraph) V() int {
 	return di.v
 }
 
 // E is the number of edges.
-func (di Digraph) E() int {
-	return *di.e
+func (di *Digraph) E() int {
+	return di.e
 }
 
 // Reverse returns the reverse of this digraph
-func (di Digraph) Reverse() Digraph {
+func (di *Digraph) Reverse() *Digraph {
 	rev := NewDigraph(di.V())
 	for v := 0; v < di.V(); v++ {
 		for _, w := range di.Adj(v) {
@@ -93,7 +93,7 @@ func (di Digraph) Reverse() Digraph {
 }
 
 // GoString represents this graph as a string.
-func (di Digraph) GoString() string {
+func (di *Digraph) GoString() string {
 	var output bytes.Buffer
 
 	do := func(n int, err error) {
@@ -121,11 +121,11 @@ type DAG struct {
 
 // NewDAG returns a DAG built from digraph d, if d has no cycle. Otherwise
 // it returns an error.
-func NewDAG(d Digraph) (DAG, error) {
+func NewDAG(d *Digraph) (*DAG, error) {
 	if len(DirectedCycle(d)) == 0 {
-		return DAG{&d}, nil
+		return &DAG{d}, nil
 	}
-	return DAG{}, errors.New("digraph has at least one cycle")
+	return &DAG{}, errors.New("digraph has at least one cycle")
 
 }
 
@@ -160,7 +160,7 @@ func (d *DAG) Sort() []int {
 }
 
 // DirectedCycle returns a cycle in digraph di, if there is one.
-func DirectedCycle(di Digraph) []int {
+func DirectedCycle(di *Digraph) []int {
 
 	marked := make([]bool, di.V())
 	edgeTo := make([]int, di.V())

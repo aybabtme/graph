@@ -11,7 +11,7 @@ func TestDigraphHasVertices(t *testing.T) {
 	di := NewDigraph(expected)
 	actual := di.V()
 	if expected != actual {
-		t.Fatalf("Expected %d vertices, got %d", expected, actual)
+		t.Fatalf("Expected %d  vertices, got %d", expected, actual)
 	}
 }
 

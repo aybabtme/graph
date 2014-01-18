@@ -5,7 +5,7 @@ import (
 )
 
 type tremauxDFS struct {
-	g      graph.Graph
+	g      *graph.Graph
 	from   int
 	marked []bool
 	edgeTo []int
@@ -16,7 +16,7 @@ type tremauxDFS struct {
 func BuildDFS(g graph.Graph, s int) PathFinder {
 
 	t := tremauxDFS{
-		g:      g,
+		g:      &g,
 		from:   s,
 		marked: make([]bool, g.V()),
 		edgeTo: make([]int, g.V()),

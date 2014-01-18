@@ -11,6 +11,9 @@ const (
 	maxGraphSize = 100
 )
 
+// Assert that NewGraph returns an implementation of Graph
+var _ Graph = NewGraph(0)
+
 func TestUngraphHasVertices(t *testing.T) {
 	for i := 0; i < maxGraphSize; i = (i + 1) * 10 {
 		g := NewGraph(i)
