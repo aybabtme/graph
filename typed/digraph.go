@@ -2,7 +2,6 @@ package typed
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 
 	"github.com/aybabtme/graph"
@@ -121,7 +120,7 @@ func NewDAG(di *Digraph) (*DAG, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &DAG{di, dag}, errors.New("digraph has at least one cycle")
+	return &DAG{di, dag}, nil
 
 }
 
@@ -145,7 +144,7 @@ func DirectedCycle(di *Digraph) []interface{} {
 	for i, val := range cycle {
 		values[i] = di.invIdx[val]
 	}
-	return reverse(values)
+	return values
 }
 
 func reverse(s []interface{}) []interface{} {
