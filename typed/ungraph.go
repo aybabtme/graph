@@ -66,6 +66,11 @@ func (un *Ungraph) ID(v interface{}) int {
 	return un.index[v]
 }
 
+// Vertex returns the value represented by vID
+func (un *Ungraph) Vertex(vID int) interface{} {
+	return un.invIdx[vID]
+}
+
 // V is the number of vertices. This is O(1).
 func (un *Ungraph) V() int {
 	return un.g.V()

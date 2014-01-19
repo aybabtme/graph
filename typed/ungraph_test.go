@@ -34,7 +34,7 @@ func TestUngraphHasEdges(t *testing.T) {
 
 		actual := g.E()
 		if expect != actual {
-			t.Errorf("Expected %d edges but was %d", expect, actual)
+			t.Errorf("Expected %v edges but was %v", expect, actual)
 		}
 	}
 }
@@ -80,11 +80,11 @@ func TestUngraphCanAddEdges(t *testing.T) {
 		g.AddEdge(from, to)
 		adj := g.Adj(from)
 		if len(adj) != 1 {
-			t.Fatalf("Vertex %d should have only 1 edge", from)
+			t.Fatalf("Vertex %v should have only 1 edge", from)
 		}
 
 		if adj[0] != to {
-			t.Fatalf("Vertex %d should have an edge with %d", from, to)
+			t.Fatalf("Vertex %v should have an edge with %v", from, to)
 		}
 	}
 }

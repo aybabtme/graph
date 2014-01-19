@@ -2,13 +2,11 @@ package graph
 
 import (
 	"bytes"
-	"fmt"
 	"strconv"
 )
 
 // Graph is a graph with V vertices.
 type Graph interface {
-	fmt.GoStringer
 	// AddEdge adds an edge from v to w.
 	AddEdge(v, w int)
 	// Adj is a slice of vertices adjacent to v
